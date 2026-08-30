@@ -1,0 +1,152 @@
+// Datasource & Generator
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum Protocol {
+  REST
+  SOAP
+  GRAPHQL
+}
+
+enum ChallengeType {
+  QUIZ
+  FIX_REQUEST
+  PREDICT_RESPONSE
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+// ─── Models ───────────────────────────────────────────────────────────────────
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  username     String   @unique
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  progress            UserProgress?
+  badges              UserBadge[]
+  completedChallenges CompletedChallenge[]
+  sandboxLogs         SandboxLog[]
+
+  @@map("users")
+}
+
+model Concept {
+  id             String   @id @default(uuid())
+  protocol       Protocol
+  title          String
+  slug           String   @unique
+  explanation    String
+  sampleEndpoint String   @map("sample_endpoint")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  comparisonPoints ComparisonPoint[]
+  challenges       Challenge[]
+
+  @@map("concepts")
+}
+
+model ComparisonPoint {
+  id        String @id @default(uuid())
+  conceptId String @map("concept_id")
+  label     String
+  value     String
+
+  concept Concept @relation(fields: [conceptId], references: [id], onDelete: Cascade)
+
+  @@map("comparison_points")
+}
+
+model Challenge {
+  id          String        @id @default(uuid())
+  conceptId   String        @map("concept_id")
+  type        ChallengeType
+  question    String
+  xpReward    Int           @map("xp_reward")
+  difficulty  Difficulty
+  explanation String?
+  createdAt   DateTime      @default(now()) @map("created_at")
+
+  concept   Concept              @relation(fields: [conceptId], references: [id], onDelete: Cascade)
+  options   ChallengeOption[]
+  completed CompletedChallenge[]
+
+  @@map("challenges")
+}
+
+model ChallengeOption {
+  id          String  @id @default(uuid())
+  challengeId String  @map("challenge_id")
+  optionText  String  @map("option_text")
+  isCorrect   Boolean @map("is_correct")
+
+  challenge Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  @@map("challenge_options")
+}
+
+model UserProgress {
+  userId       String    @id @map("user_id")
+  xpTotal      Int       @default(0) @map("xp_total")
+  level        Int       @default(1)
+  streakCount  Int       @default(0) @map("streak_count")
+  lastActivity DateTime? @map("last_activity")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_progress")
+}
+
+model UserBadge {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  badgeCode String   @map("badge_code")
+  earnedAt  DateTime @default(now()) @map("earned_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeCode])
+  @@map("user_badges")
+}
+
+model CompletedChallenge {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  challengeId String   @map("challenge_id")
+  completedAt DateTime @default(now()) @map("completed_at")
+  isCorrect   Boolean  @map("is_correct")
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challenge Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, challengeId])
+  @@map("completed_challenges")
+}
+
+model SandboxLog {
+  id              String   @id @default(uuid())
+  userId          String?  @map("user_id")
+  protocol        Protocol
+  requestPayload  Json     @map("request_payload")
+  responsePayload Json     @map("response_payload")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("sandbox_logs")
+}

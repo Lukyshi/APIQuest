@@ -1,0 +1,67 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: apiquest_db
+    environment:
+      POSTGRES_USER: apiquest
+      POSTGRES_PASSWORD: apiquest_secret
+      POSTGRES_DB: apiquest
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U apiquest']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: apiquest_backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://apiquest:apiquest_secret@postgres:5432/apiquest
+      PORT: 5000
+      NODE_ENV: development
+      JWT_ACCESS_SECRET: docker_access_secret_change_in_prod_min32
+      JWT_REFRESH_SECRET: docker_refresh_secret_change_in_prod_32x
+      JWT_ACCESS_EXPIRES_IN: 15m
+      JWT_REFRESH_EXPIRES_IN: 7d
+      SANDBOX_REST_BASE_URL: https://jsonplaceholder.typicode.com
+      SANDBOX_GRAPHQL_BASE_URL: https://countries.trevorblades.com/graphql
+      SANDBOX_SOAP_BASE_URL: http://www.dneonline.com/calculator.asmx
+      RATE_LIMIT_WINDOW_MS: 60000
+      RATE_LIMIT_MAX_REQUESTS: 30
+    ports:
+      - '5000:5000'
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    command: >
+      sh -c "npx prisma db push && node prisma/seed.js && npm run dev"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: apiquest_frontend
+    depends_on:
+      - backend
+    environment:
+      VITE_API_BASE_URL: http://localhost:5000/api
+    ports:
+      - '5173:5173'
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm run dev -- --host
+
+volumes:
+  pgdata:
