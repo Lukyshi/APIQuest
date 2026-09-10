@@ -5,8 +5,8 @@ const { authenticate, optionalAuthenticate } = require('../../middlewares/auth.m
 
 const router = Router();
 
-router.get('/',         controller.list);
+router.get('/',         optionalAuthenticate, controller.list);
 router.get('/:id',      controller.getById);
-router.post('/:id/submit', optionalAuthenticate, controller.submit);
+router.post('/:id/submit', authenticate, controller.submit);
 
 module.exports = router;

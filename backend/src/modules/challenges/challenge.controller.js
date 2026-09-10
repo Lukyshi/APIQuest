@@ -6,7 +6,7 @@ const ApiError = require('../../utils/ApiError');
 const list = asyncHandler(async (req, res) => {
   const { concept } = req.query;
   if (!concept) throw ApiError.badRequest('Query param "concept" is required (e.g. ?concept=rest)');
-  const data = await challengeService.listByConceptSlug(concept.toLowerCase());
+  const data = await challengeService.listByConceptSlug(concept.toLowerCase(), req.user?.id);
   res.json({ success: true, data });
 });
 

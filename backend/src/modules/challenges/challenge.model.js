@@ -6,8 +6,8 @@ const findByConceptSlug = async (slug) => {
   if (!concept) return null;
   return prisma.challenge.findMany({
     where: { conceptId: concept.id },
-    include: { options: { select: { id: true, optionText: true, isCorrect: false } } },
-    orderBy: [{ difficulty: 'asc' }, { createdAt: 'asc' }],
+    include: { options: { select: { id: true, optionText: true } } },
+    orderBy: [{ level: 'asc' }, { difficulty: 'asc' }],
   });
 };
 

@@ -3,10 +3,27 @@ const challengeModel = require('./challenge.model');
 const progressModel = require('../progress/progress.model');
 const ApiError = require('../../utils/ApiError');
 
-const listByConceptSlug = async (slug) => {
+const listByConceptSlug = async (slug, userId) => {
   const challenges = await challengeModel.findByConceptSlug(slug);
   if (!challenges) throw ApiError.notFound(`Concept "${slug}" not found`);
-  return challenges;
+
+  let userXp = 0;
+  let completedMap = {};
+
+  if (userId) {
+    const progress = await progressModel.getByUserId(userId);
+    userXp = progress?.xpTotal || 0;
+    const completedList = await progressModel.getCompletedChallenges(userId);
+    completedList.forEach((c) => {
+      if (c.isCorrect) completedMap[c.challengeId] = true;
+    });
+  }
+
+  return challenges.map((ch) => ({
+    ...ch,
+    isCompleted: !!completedMap[ch.id],
+    isUnlocked: userXp >= ch.requiredXp,
+  }));
 };
 
 const getById = async (id) => {

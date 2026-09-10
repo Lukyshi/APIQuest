@@ -123,7 +123,17 @@ const checkAndAwardBadges = async (userId) => {
 const getProgress = (userId) =>
   prisma.userProgress.findUnique({ where: { userId } });
 
+const getByUserId = (userId) =>
+  prisma.userProgress.findUnique({ where: { userId } });
+
+const getCompletedChallenges = (userId) =>
+  prisma.completedChallenge.findMany({
+    where: { userId },
+    select: { challengeId: true, isCorrect: true },
+  });
+
 const getBadges = (userId) =>
   prisma.userBadge.findMany({ where: { userId }, orderBy: { earnedAt: 'asc' } });
 
-module.exports = { getOrCreate, addXp, updateStreak, checkAndAwardBadges, getProgress, getBadges };
+module.exports = { getOrCreate, addXp, updateStreak, checkAndAwardBadges, getProgress, getByUserId, getCompletedChallenges, getBadges };
+

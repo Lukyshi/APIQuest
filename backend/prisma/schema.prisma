@@ -14,6 +14,12 @@ enum Protocol {
   REST
   SOAP
   GRAPHQL
+  AUTHENTICATION
+  PAGINATION
+  RATE_LIMITING
+  SECURITY
+  WEBHOOKS
+  ERROR_HANDLING
 }
 
 enum ChallengeType {
@@ -77,6 +83,8 @@ model Challenge {
   type        ChallengeType
   question    String
   xpReward    Int           @map("xp_reward")
+  level       Int           @default(1)
+  requiredXp  Int           @default(0) @map("required_xp")
   difficulty  Difficulty
   explanation String?
   createdAt   DateTime      @default(now()) @map("created_at")
