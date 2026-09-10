@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Press+Start+2P&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -8,17 +8,18 @@
   *, *::before, *::after { box-sizing: border-box; }
 
   :root {
-    --bg-primary:   #0f0f1a;
-    --bg-surface-1: #16162a;
-    --bg-surface-2: #1d1d35;
-    --bg-surface-3: #252540;
-    --brand:        #6366f1;
-    --brand-light:  #818cf8;
-    --violet:       #8b5cf6;
-    --text-primary: #f1f5f9;
+    --bg-primary:   #0d0d12;
+    --bg-surface-1: #14141c;
+    --bg-surface-2: #1f1f2b;
+    --bg-surface-3: #2a2a3b;
+    --yellow-500:   #f59e0b;
+    --yellow-400:   #fbbf24;
+    --orange-500:   #f97316;
+    --orange-400:   #fb923c;
+    --text-primary: #f8fafc;
     --text-muted:   #94a3b8;
-    --border:       rgba(99,102,241,0.18);
-    --border-hover: rgba(99,102,241,0.4);
+    --border:       rgba(245, 158, 11, 0.22);
+    --border-hover: rgba(249, 115, 22, 0.55);
   }
 
   html { scroll-behavior: smooth; }
@@ -29,48 +30,87 @@
     min-height: 100vh;
   }
 
-  ::selection { background: rgba(99,102,241,0.35); color: #fff; }
+  ::selection { background: rgba(245, 158, 11, 0.35); color: #fff; }
 
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: var(--bg-surface-1); }
   ::-webkit-scrollbar-thumb { background: var(--bg-surface-3); border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--brand); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--yellow-500); }
 }
 
 @layer components {
-  /* ── Glass Card ─────────────────────────────────────────────────────────── */
+  /* ── Typography & Headers ─────────────────────────────────────────────── */
+  .font-pixel {
+    font-family: 'Pixelify Sans', 'Press Start 2P', cursive, monospace;
+    letter-spacing: 0.02em;
+  }
+
+  .font-press-start {
+    font-family: 'Press Start 2P', cursive, monospace;
+    line-height: 1.5;
+  }
+
+  /* ── Arcade Glass Card ─────────────────────────────────────────────────── */
   .glass-card {
-    background: rgba(22, 22, 42, 0.7);
+    background: rgba(20, 20, 28, 0.85);
     backdrop-filter: blur(16px);
     border: 1px solid var(--border);
-    border-radius: 1rem;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    border-radius: 0.85rem;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
   }
-  .glass-card:hover { border-color: var(--border-hover); }
+  .glass-card:hover {
+    border-color: var(--border-hover);
+    box-shadow: 0 0 25px rgba(245, 158, 11, 0.18);
+  }
 
-  /* ── Buttons ────────────────────────────────────────────────────────────── */
-  .btn {
-    @apply inline-flex items-center justify-center gap-2 font-semibold rounded-xl px-5 py-2.5 text-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed select-none;
+  .pixel-card {
+    background: #14141c;
+    border: 2px solid #f59e0b;
+    border-radius: 0.75rem;
+    box-shadow: 4px 4px 0px #000, 0 0 15px rgba(245, 158, 11, 0.2);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
+  .pixel-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 6px 6px 0px #000, 0 0 25px rgba(249, 115, 22, 0.35);
+  }
+
+  /* ── Retro Arcade Buttons ────────────────────────────────────────────────── */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 font-bold rounded-xl px-5 py-2.5 text-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed select-none;
+  }
+
   .btn-primary {
-    @apply btn text-white;
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    box-shadow: 0 0 20px rgba(99,102,241,0.3);
+    @apply btn text-slate-950 font-extrabold;
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #f97316 100%);
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.4), 0 2px 4px rgba(0,0,0,0.5);
+    border: 1px solid #fde047;
   }
   .btn-primary:hover:not(:disabled) {
     transform: translateY(-1px);
-    box-shadow: 0 0 30px rgba(99,102,241,0.5);
+    box-shadow: 0 0 30px rgba(249, 115, 22, 0.6), 0 4px 8px rgba(0,0,0,0.6);
   }
-  .btn-primary:active:not(:disabled) { transform: translateY(0); }
+  .btn-primary:active:not(:disabled) { transform: translateY(1px); }
+
+  .btn-arcade {
+    @apply btn text-amber-300 font-pixel font-bold uppercase tracking-wider text-xs px-6 py-3 rounded-lg border-2 border-amber-400;
+    background: #1f1f2b;
+    box-shadow: 3px 3px 0px #000;
+  }
+  .btn-arcade:hover:not(:disabled) {
+    background: #f59e0b;
+    color: #0d0d12;
+    box-shadow: 4px 4px 0px #000, 0 0 20px rgba(245, 158, 11, 0.5);
+    transform: translate(-1px, -1px);
+  }
 
   .btn-ghost {
-    @apply btn text-slate-300 border border-transparent hover:border-brand-500/40 hover:text-white hover:bg-surface-2;
+    @apply btn text-slate-300 border border-transparent hover:border-amber-500/40 hover:text-amber-400 hover:bg-surface-2;
   }
+
   .btn-outline {
-    @apply btn text-brand-400 border border-brand-500/40 hover:bg-brand-500/10 hover:text-white hover:border-brand-400;
-  }
-  .btn-danger {
-    @apply btn text-white bg-rose-600 hover:bg-rose-500;
+    @apply btn text-amber-400 border border-amber-500/40 hover:bg-amber-500/10 hover:text-white hover:border-amber-400;
   }
 
   /* ── Inputs ─────────────────────────────────────────────────────────────── */
@@ -79,82 +119,77 @@
     background: var(--bg-surface-2);
     border: 1px solid var(--border);
   }
-  .input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
+  .input:focus {
+    border-color: var(--yellow-500);
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+  }
 
   .textarea {
     @apply input resize-none font-mono text-xs leading-relaxed;
   }
 
-  /* ── Badge Pill ─────────────────────────────────────────────────────────── */
+  /* ── Yellow & Orange Badge Pills ────────────────────────────────────────── */
   .pill {
-    @apply inline-flex items-center gap-1.5 text-xs font-semibold rounded-full px-3 py-1;
+    @apply inline-flex items-center gap-1.5 text-xs font-bold rounded-md px-2.5 py-1 uppercase tracking-wide font-pixel;
   }
-  .pill-brand   { @apply pill bg-brand-500/15 text-brand-300 border border-brand-500/25; }
-  .pill-violet  { @apply pill bg-violet-500/15 text-violet-300 border border-violet-500/25; }
-  .pill-emerald { @apply pill bg-emerald-500/15 text-emerald-300 border border-emerald-500/25; }
-  .pill-amber   { @apply pill bg-amber-500/15 text-amber-300 border border-amber-500/25; }
-  .pill-rose    { @apply pill bg-rose-500/15 text-rose-300 border border-rose-500/25; }
-  .pill-slate   { @apply pill bg-slate-500/15 text-slate-300 border border-slate-500/25; }
+  .pill-yellow  { @apply pill bg-amber-500/20 text-amber-300 border border-amber-500/40; }
+  .pill-orange  { @apply pill bg-orange-500/20 text-orange-300 border border-orange-500/40; }
+  .pill-emerald { @apply pill bg-emerald-500/20 text-emerald-300 border border-emerald-500/40; }
+  .pill-slate   { @apply pill bg-slate-500/20 text-slate-300 border border-slate-500/40; }
+  .pill-rose    { @apply pill bg-rose-500/20 text-rose-300 border border-rose-500/40; }
+  .pill-brand   { @apply pill-yellow; }
+  .pill-violet  { @apply pill-orange; }
+  .pill-amber   { @apply pill-yellow; }
 
-  /* ── Section Headings ────────────────────────────────────────────────────── */
-  .section-title {
-    @apply text-2xl font-bold text-white;
-  }
-  .section-subtitle {
-    @apply text-slate-400 text-sm mt-1;
-  }
-
-  /* ── Gradient Text ───────────────────────────────────────────────────────── */
+  /* ── Text Gradients ──────────────────────────────────────────────────────── */
   .gradient-text {
-    background: linear-gradient(135deg, #818cf8 0%, #a78bfa 50%, #6366f1 100%);
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #f97316 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
-  /* ── XP Bar ─────────────────────────────────────────────────────────────── */
+  .gradient-orange-text {
+    background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── XP HUD Bar ──────────────────────────────────────────────────────────── */
   .xp-bar {
-    @apply w-full h-2 rounded-full overflow-hidden;
+    @apply w-full h-2.5 rounded-full overflow-hidden border border-amber-500/20;
     background: var(--bg-surface-3);
   }
   .xp-bar-fill {
     @apply h-full rounded-full transition-all duration-700 ease-out;
-    background: linear-gradient(90deg, #6366f1, #8b5cf6);
-    box-shadow: 0 0 8px rgba(99,102,241,0.5);
+    background: linear-gradient(90deg, #fbbf24, #f97316);
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
   }
 
   /* ── Code Block ─────────────────────────────────────────────────────────── */
   .code-block {
     @apply font-mono text-xs leading-relaxed rounded-xl p-4 overflow-auto;
-    background: #0a0a14;
+    background: #09090e;
     border: 1px solid var(--border);
-    color: #e2e8f0;
+    color: #f1f5f9;
     max-height: 400px;
-  }
-
-  /* ── Spinner ─────────────────────────────────────────────────────────────── */
-  .spinner {
-    @apply inline-block rounded-full border-2 border-surface-3 border-t-brand-400 animate-spin;
-  }
-
-  /* ── Divider ─────────────────────────────────────────────────────────────── */
-  .divider {
-    @apply border-t border-brand-500/10 my-6;
   }
 
   /* ── Nav Link ────────────────────────────────────────────────────────────── */
   .nav-link {
-    @apply flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-surface-2 transition-all duration-150;
+    @apply flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold text-slate-400 hover:text-amber-400 hover:bg-surface-2 transition-all duration-150;
   }
   .nav-link.active {
-    @apply text-brand-300 bg-brand-500/10 border border-brand-500/20;
+    @apply text-amber-300 bg-amber-500/15 border border-amber-500/30 font-bold;
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.15);
   }
 }
 
 @layer utilities {
   .text-balance { text-wrap: balance; }
-  .glow { box-shadow: 0 0 20px rgba(99,102,241,0.35); }
-  .glow-lg { box-shadow: 0 0 40px rgba(99,102,241,0.45); }
+  .glow { box-shadow: 0 0 20px rgba(245, 158, 11, 0.35); }
+  .glow-lg { box-shadow: 0 0 40px rgba(249, 115, 22, 0.45); }
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 }
