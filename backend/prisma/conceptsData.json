@@ -1,0 +1,128 @@
+[
+  {
+    "protocol": "REST",
+    "title": "REST — Representational State Transfer",
+    "slug": "rest",
+    "sampleEndpoint": "https://jsonplaceholder.typicode.com",
+    "explanation": "## What is REST?\n\nREST (Representational State Transfer) is an architectural style introduced by Roy Fielding in his 2000 doctoral dissertation. It defines a set of constraints for building scalable web services over HTTP — not a rigid protocol, but a set of architectural principles.\n\n## The 6 REST Constraints\n\n**1. Stateless** — Every request must contain all information needed to process it. The server holds no client session state between calls, enabling frictionless horizontal scaling.\n\n**2. Uniform Interface** — Resources are identified by URIs. Manipulation is performed through standard HTTP verbs. Responses are self-descriptive via Content-Type headers.\n\n**3. Client-Server Separation** — Frontend and backend are completely decoupled. They evolve independently as long as the contract remains stable.\n\n**4. Cacheable** — Responses must declare whether they are cacheable using `Cache-Control`, `ETag`, and `Last-Modified` headers.\n\n**5. Layered System** — Clients do not know (or care) whether they connect directly to the origin server, a CDN cache, or an API gateway.\n\n**6. Code on Demand (optional)** — Servers can optionally return executable code (like JavaScript) to clients.\n\n## HTTP Verbs & Semantics\n\n```\nGET    /users        → List all users           (safe, idempotent)\nGET    /users/42     → Fetch user #42           (safe, idempotent)\nPOST   /users        → Create a new user        (not idempotent)\nPUT    /users/42     → Replace user #42 fully   (idempotent)\nPATCH  /users/42     → Update specific fields   (idempotent)\nDELETE /users/42     → Remove user #42          (idempotent)\n```\n\n## Standard Status Codes\n\n```\n200 OK           — Successful GET / PATCH\n201 Created      — POST that created a resource (with Location header)\n204 No Content   — DELETE or PUT with no body returned\n400 Bad Request  — Malformed request syntax / validation failure\n401 Unauthorized — Missing or invalid authentication token\n403 Forbidden    — Authenticated but lacks required permission\n404 Not Found    — Target resource does not exist\n429 Too Many Requests — Rate limit threshold exceeded\n500 Internal Error — Unexpected server-side failure\n```\n\n## Real-World Example\n\n```http\nPOST /api/v1/articles HTTP/1.1\nHost: api.example.com\nAuthorization: Bearer eyJhbGciOi...\nContent-Type: application/json\nAccept: application/json\n\n{\n  \"title\": \"Understanding REST APIs\",\n  \"content\": \"REST is an architectural style...\",\n  \"tags\": [\"api\", \"web\"]\n}\n\n# Response:\nHTTP/1.1 201 Created\nLocation: /api/v1/articles/108\nContent-Type: application/json\nETag: W/\"33a64df551425fcc55e4d42a148795d9f25f89d4\"\n\n{\n  \"id\": 108,\n  \"title\": \"Understanding REST APIs\",\n  \"status\": \"published\",\n  \"createdAt\": \"2026-09-11T00:00:00Z\"\n}\n```\n\n## Industry Best Practices\n\n**Nouns not verbs in URIs** — Use `/orders` instead of `/createOrder` or `/getOrders`.\n\n**Plural resource names** — Standardize on `/users` and `/users/{id}` for consistency.\n\n**API versioning** — Use URI path prefix `/v1/users` or Header-based versioning `Accept: application/vnd.company.v1+json`.\n\n**Pagination & Filtering** — Return structured metadata for collections: `?page=2&limit=20&sort=-createdAt`.",
+    "comparisonPoints": [
+      { "label": "Architecture", "value": "Resource-oriented, stateless, uniform interface" },
+      { "label": "Data Format", "value": "JSON (primary), XML, HTML, plain text" },
+      { "label": "Transport", "value": "HTTP / HTTPS with standard verbs & status codes" },
+      { "label": "Idempotency", "value": "GET, PUT, DELETE are idempotent; POST is not" },
+      { "label": "Best For", "value": "Public APIs, web & mobile applications, microservices" }
+    ]
+  },
+  {
+    "protocol": "SOAP",
+    "title": "SOAP — Simple Object Access Protocol",
+    "slug": "soap",
+    "sampleEndpoint": "https://www.dataaccess.com/webservicesserver/NumberConversion.wso",
+    "explanation": "## What is SOAP?\n\nSOAP (Simple Object Access Protocol) is a W3C-standard messaging protocol designed for exchanging structured, strongly-typed information in enterprise distributed environments. Unlike REST's architectural flexibility, SOAP is a **strict specification** built on XML.\n\n## Anatomy of a SOAP Message\n\nEvery SOAP message is an XML document packaged into an **Envelope** with four distinct sections:\n\n```xml\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"\n               xmlns:web=\"http://api.example.com/banking\">\n  <soap:Header>\n    <!-- Optional: Security tokens, routing metadata, transaction IDs -->\n    <wsse:Security xmlns:wsse=\"http://docs.oasis-open.org/wss/2004/01/...\">\n      <wsse:UsernameToken>\n        <wsse:Username>agent_47</wsse:Username>\n        <wsse:Password>SecretDigest123</wsse:Password>\n      </wsse:UsernameToken>\n    </wsse:Security>\n  </soap:Header>\n  <soap:Body>\n    <!-- Mandatory: The actual payload / RPC invocation -->\n    <web:TransferFunds>\n      <web:FromAccount>ACC-9921</web:FromAccount>\n      <web:ToAccount>ACC-1044</web:ToAccount>\n      <web:Amount currency=\"USD\">5000.00</web:Amount>\n    </web:TransferFunds>\n  </soap:Body>\n</soap:Envelope>\n```\n\n## WSDL — The Strict Service Contract\n\nWSDL (Web Services Description Language) is an XML schema describing the entire API contract:\n- Available operations and methods\n- Input/Output data types and constraints (XSD validation)\n- Network endpoint address and binding protocols\n\nBecause WSDL is strictly typed, enterprise client code (Java stubs, C# classes) can be auto-generated with zero manual typing.\n\n## WS-Security & Enterprise Standards\n\nSOAP features built-in enterprise extensions maintained by OASIS:\n- **WS-Security**: End-to-end XML message signing & encryption (tamper-proof even across multiple intermediary proxies)\n- **WS-ReliableMessaging**: Guarantees exactly-once message delivery over lossy networks\n- **WS-AtomicTransaction**: Distributed ACID transactions across multi-system boundaries\n\n## When to Use SOAP\n\n- **Financial Services & Banking** (SWIFT, core banking ledgers)\n- **Healthcare Systems** (HL7 EHR data integrations)\n- **Legacy Enterprise Backbones** (SAP, Oracle, IBM WebSphere)",
+    "comparisonPoints": [
+      { "label": "Message Format", "value": "Strict XML Envelopes only" },
+      { "label": "Contract", "value": "WSDL (Web Services Description Language)" },
+      { "label": "Security", "value": "WS-Security (message-level encryption & signatures)" },
+      { "label": "Transport", "value": "HTTP, SMTP, JMS, TCP" },
+      { "label": "Error Format", "value": "SOAP Fault element in response body" }
+    ]
+  },
+  {
+    "protocol": "GRAPHQL",
+    "title": "GraphQL — Query Language for APIs",
+    "slug": "graphql",
+    "sampleEndpoint": "https://countries.trevorblades.com/graphql",
+    "explanation": "## What is GraphQL?\n\nGraphQL is a **query language for APIs and a server-side runtime** created by Meta in 2012. Instead of calling multiple fixed REST endpoints (`/users/1`, `/users/1/posts`, `/users/1/followers`), GraphQL provides a **single endpoint** (`POST /graphql`) where clients request the exact fields they need in a single round-trip.\n\n## The Core Operations\n\n### 1. Query (Read Data)\n```graphql\nquery GetUserProfile($userId: ID!) {\n  user(id: $userId) {\n    id\n    username\n    avatarUrl\n    badges(limit: 3) {\n      name\n      iconUrl\n    }\n    stats {\n      rank\n      totalXp\n    }\n  }\n}\n```\n\n### 2. Mutation (Write Data)\n```graphql\nmutation CompleteQuest($questId: ID!, $score: Int!) {\n  submitQuestResult(questId: $questId, score: $score) {\n    success\n    xpAwarded\n    newLevel\n  }\n}\n```\n\n### 3. Subscription (Real-Time Streams)\n```graphql\nsubscription OnLeaderboardUpdate {\n  leaderboardTopChanged {\n    rank\n    username\n    totalXp\n  }\n}\n```\n\n## Schema & Resolvers\n\nA GraphQL server defines a strongly-typed schema (SDL):\n\n```graphql\ntype Player {\n  id: ID!\n  username: String!\n  level: Int!\n  inventory: [Item!]!\n}\n\ntype Query {\n  player(id: ID!): Player\n}\n```\n\nEach field is backed by a **resolver function** that executes database or service calls:\n\n```javascript\nconst resolvers = {\n  Query: {\n    player: async (_, { id }, context) => context.db.player.findUnique({ where: { id } }),\n  },\n  Player: {\n    inventory: async (parent, _, context) => context.db.items.findMany({ where: { playerId: parent.id } }),\n  }\n};\n```\n\n## The N+1 Query Problem & DataLoader\n\nWhen fetching nested relations (e.g., 20 users with their team details), naive resolvers run 1 query for users + 20 queries for teams (21 total queries). **DataLoader** solves this by batching and caching ID lookups into a single SQL `WHERE id IN (...)` query.",
+    "comparisonPoints": [
+      { "label": "Endpoint", "value": "Single POST /graphql for all operations" },
+      { "label": "Operations", "value": "Query · Mutation · Subscription" },
+      { "label": "Schema", "value": "Strongly typed SDL — self-documenting" },
+      { "label": "Over-fetching", "value": "Eliminated — client specifies exact fields" },
+      { "label": "Real-time", "value": "Subscriptions via WebSocket transport" }
+    ]
+  },
+  {
+    "protocol": "AUTHENTICATION",
+    "title": "API Authentication & Authorization",
+    "slug": "auth",
+    "sampleEndpoint": "https://api.example.com/v1/user",
+    "explanation": "## Authentication vs Authorization\n\n- **Authentication (AuthN)**: *Who are you?* (Verifying identity via API Key, Password, Token)\n- **Authorization (AuthZ)**: *What are you allowed to do?* (Permissions, Scopes, Role-Based Access Control)\n\n## Common API Authentication Methods\n\n### 1. API Keys\nSimple static tokens passed in headers. Best for machine-to-machine integrations or developer SDKs.\n```http\nGET /v1/weather HTTP/1.1\nX-API-Key: sk_live_9a8b7c6d5e4f3a2b1c\n```\n\n### 2. Bearer Tokens & JWT (JSON Web Tokens)\nStateless, cryptographically signed tokens containing user payload and expiry claims.\n\n```\nJWT Structure: [Header].[Payload].[Signature]\n\nHeader:    {\"alg\": \"HS256\", \"typ\": \"JWT\"}\nPayload:   {\"sub\": \"usr_102\", \"role\": \"player\", \"exp\": 1773000000}\nSignature: HMACSHA256(base64(Header) + \".\" + base64(Payload), secret)\n```\n\nSent in the standard Authorization header:\n```http\nGET /v1/profile HTTP/1.1\nAuthorization: Bearer eyJhbGciOiJIUzI1NiIsIn...\n```\n\n### 3. OAuth 2.0 & OpenID Connect (OIDC)\nDelegated authorization framework for third-party access (e.g., \"Sign in with Google/GitHub\").\n\n- **Authorization Code Flow + PKCE**: The modern gold standard for SPAs and mobile apps\n- **Client Credentials Flow**: Server-to-server automated background services\n\n## Security Best Practices\n\n- Always enforce HTTPS/TLS to protect tokens in transit\n- Keep Access Token lifetimes short (e.g. 15 minutes) and rotate Refresh Tokens\n- Never store access tokens in `localStorage` if vulnerable to XSS; use `HttpOnly`, `Secure`, `SameSite=Strict` cookies\n- Validate token signatures, issuer (`iss`), audience (`aud`), and expiration (`exp`) on every request",
+    "comparisonPoints": [
+      { "label": "Auth Type", "value": "API Keys, Bearer Tokens (JWT), OAuth 2.0 / OIDC" },
+      { "label": "Header Format", "value": "Authorization: Bearer <token>" },
+      { "label": "Token Lifetime", "value": "Short-lived access tokens (15m) + refresh token rotation" },
+      { "label": "Statelessness", "value": "JWT enables stateless server verification" },
+      { "label": "Storage", "value": "HttpOnly Secure cookies or secure device storage" }
+    ]
+  },
+  {
+    "protocol": "PAGINATION",
+    "title": "API Pagination Strategies",
+    "slug": "pagination",
+    "sampleEndpoint": "https://api.example.com/v1/items?page=1&limit=20",
+    "explanation": "## Why Pagination is Essential\n\nLoading thousands of database records in a single API response leads to high memory consumption, sluggish database queries, network latency, and client crashes. Pagination splits large datasets into predictable, bite-sized pages.\n\n## The Three Major Pagination Strategies\n\n### 1. Offset-Based Pagination\nUsing `page` and `limit` (or `offset` and `limit`):\n```http\nGET /v1/items?offset=40&limit=20 HTTP/1.1\n```\n- **SQL Equivalent**: `SELECT * FROM items ORDER BY id LIMIT 20 OFFSET 40`\n- **Pros**: Easy to implement, supports direct \"jump to page N\"\n- **Cons**: Slow on deep pages (`OFFSET 1000000` scans 1M rows); causes duplicates/skips if records are added/deleted while paging\n\n### 2. Keyset / Cursor-Based Pagination\nUsing an opaque pointer to the last seen record:\n```http\nGET /v1/items?limit=20&after=eyJpZCI6MTA0Mn0= HTTP/1.1\n```\n- **SQL Equivalent**: `SELECT * FROM items WHERE id > 1042 ORDER BY id ASC LIMIT 20`\n- **Pros**: Blazing fast (`O(1)` indexed seek regardless of depth), immune to phantom rows and data shifts\n- **Cons**: Cannot jump to arbitrary page numbers (sequential forward/back only)\n\n### 3. Time-Window Pagination\nUsing timestamps (`since` and `until`) for append-only time-series feeds (logs, analytics, chat history).\n\n## Standard Response Headers (RFC 5988)\n\nUse the `Link` header for navigation links:\n```http\nHTTP/1.1 200 OK\nLink: <https://api.example.com/v1/items?page=3&limit=20>; rel=\"next\",\n      <https://api.example.com/v1/items?page=1&limit=20>; rel=\"prev\",\n      <https://api.example.com/v1/items?page=50&limit=20>; rel=\"last\"\n```",
+    "comparisonPoints": [
+      { "label": "Offset Paging", "value": "Simple ?page=1&limit=20, supports jumping to arbitrary page" },
+      { "label": "Cursor Paging", "value": "O(1) index seek, immune to record insertions/deletions" },
+      { "label": "RFC Standard", "value": "RFC 5988 Link header (rel=\"next\", rel=\"prev\")" },
+      { "label": "Performance", "value": "Cursor pagination scales to billions of records seamlessly" },
+      { "label": "Best For", "value": "Social feeds, infinite scroll, real-time activity logs" }
+    ]
+  },
+  {
+    "protocol": "RATE_LIMITING",
+    "title": "Rate Limiting & Throttling",
+    "slug": "rate-limiting",
+    "sampleEndpoint": "https://api.example.com/v1/search",
+    "explanation": "## Why APIs Need Rate Limiting\n\nRate limiting controls the frequency of incoming requests to protect infrastructure from DDoS attacks, prevent brute-force credential stuffing, ensure fair tenant resource distribution, and enforce monetization tier quotas.\n\n## Core Rate Limiting Algorithms\n\n### 1. Token Bucket\nA bucket fills with tokens at a constant rate `r` up to capacity `b`. Each request consumes 1 token. If the bucket is empty, requests are rejected. Allows short bursts up to capacity `b` while strictly capping long-term consumption.\n\n### 2. Leaky Bucket\nRequests enter a queue (bucket) and are processed at a steady outflow rate. Excess requests overflow and are dropped immediately. Eliminates bursts and smooths out traffic spikes.\n\n### 3. Sliding Window Counter\nCombines the current window counter with the weighted percentage of the previous window to prevent boundary burst attacks where double quotas are consumed across window transitions.\n\n## Standard Rate Limit Headers (IETF)\n\n```http\nHTTP/1.1 200 OK\nRateLimit-Limit: 100\nRateLimit-Remaining: 87\nRateLimit-Reset: 1773000060\n\n# When limit exceeded:\nHTTP/1.1 429 Too Many Requests\nRetry-After: 30\nContent-Type: application/problem+json\n\n{\n  \"type\": \"https://api.example.com/errors/rate-limit-exceeded\",\n  \"title\": \"Too Many Requests\",\n  \"status\": 429,\n  \"detail\": \"Quota exceeded. Please retry after 30 seconds.\"\n}\n```\n\n## Distributed Rate Limiting with Redis\n\nIn modern microservices with multi-instance servers, rate limits are tracked in Redis using atomic Lua scripts or Redis cell modules to avoid race conditions across cluster nodes.",
+    "comparisonPoints": [
+      { "label": "HTTP Status", "value": "429 Too Many Requests" },
+      { "label": "Key Headers", "value": "RateLimit-Limit · RateLimit-Remaining · Retry-After" },
+      { "label": "Token Bucket", "value": "Allows bursts up to bucket capacity" },
+      { "label": "Sliding Window", "value": "Accurate, eliminates boundary spike vulnerability" },
+      { "label": "Scope", "value": "Per-IP · Per-API-Key · Per-User · Per-Route" }
+    ]
+  },
+  {
+    "protocol": "SECURITY",
+    "title": "API Security & Threat Protection",
+    "slug": "security",
+    "sampleEndpoint": "https://api.example.com/v1/secure-data",
+    "explanation": "## OWASP API Security Top 10\n\nThe Open Worldwide Application Security Project (OWASP) highlights the most dangerous API vulnerabilities:\n\n### 1. Broken Object Level Authorization (BOLA / IDOR)\n#1 risk in APIs. Occurs when endpoints expose IDs without verifying ownership:\n```http\n# Attack: User 42 reads User 99's private billing\nGET /api/v1/users/99/invoices\nAuthorization: Bearer <user_42_token>\n```\n- **Remediation**: Always enforce authorization checks in the data layer: `WHERE invoice.user_id = req.user.id`.\n\n### 2. Broken Authentication\nWeak passwords, unvalidated JWT signatures, missing token expirations, credentials in URLs.\n\n### 3. Broken Object Property Level Authorization (BOPLA)\nReturning sensitive fields in responses (`passwordHash`, `ssn`, `internalNotes`) or allowing mass assignment on update endpoints.\n\n### 4. Unrestricted Resource Consumption\nMissing rate limits, unbounded array payload sizes, unconstrained SQL queries.\n\n### 5. Security Misconfiguration\nWildcard CORS headers (`Access-Control-Allow-Origin: *` with credentials), verbose stack traces exposed in production.\n\n## Essential Security Headers Checklist\n\n```http\nStrict-Transport-Security: max-age=63072000; includeSubDomains; preload\nX-Content-Type-Options: nosniff\nX-Frame-Options: DENY\nContent-Security-Policy: default-src 'none'; frame-ancestors 'none'\nReferrer-Policy: strict-origin-when-cross-origin\n```\n\n## Injection Prevention\nAlways validate request bodies with strict schemas (e.g. Zod, Joi) and use parameterized SQL queries or ORMs (Prisma, TypeORM) to eliminate SQL injection.",
+    "comparisonPoints": [
+      { "label": "Transport", "value": "TLS 1.3 + HSTS header mandatory" },
+      { "label": "Top Threat", "value": "BOLA — broken object-level authorization" },
+      { "label": "CORS", "value": "Allowlist specific origins, never wildcard * with credentials" },
+      { "label": "Injection", "value": "Parameterized queries + strict schema validation always" },
+      { "label": "Headers", "value": "X-Content-Type-Options, CSP, X-Frame-Options, HSTS" }
+    ]
+  },
+  {
+    "protocol": "WEBHOOKS",
+    "title": "Webhooks & Event-Driven APIs",
+    "slug": "webhooks",
+    "sampleEndpoint": "https://your-app.com/webhooks/stripe",
+    "explanation": "## What are Webhooks?\n\nWebhooks are **user-defined HTTP callbacks (reverse APIs)**. Instead of your client polling a server repeatedly to check if an event happened, the provider **pushes an HTTP POST** payload to your server the instant the event occurs.\n\n## Polling vs Webhooks\n\n```\nPOLLING (Pull model):\nEvery 10s: GET /orders/new → \"no new orders\" (99.9% wasted calls)\n\nWEBHOOKS (Push model):\nOrder placed → POST /webhooks/orders { \"event\": \"order.paid\" }\nZero wasted requests, sub-second notification latency.\n```\n\n## HMAC Signature Verification\n\nBecause webhook endpoints are public, anyone can send fake requests. Providers include a cryptographic signature in headers:\n\n```javascript\nconst crypto = require('crypto');\n\nfunction verifyWebhook(rawBody, signatureHeader, webhookSecret) {\n  const [timestampPart, sigPart] = signatureHeader.split(',');\n  const timestamp = timestampPart.split('=')[1];\n  const signature = sigPart.split('=')[1];\n\n  // Prevent replay attacks (reject payloads older than 5 minutes)\n  if (Math.abs(Date.now() / 1000 - Number(timestamp)) > 300) {\n    throw new Error('Webhook timestamp expired');\n  }\n\n  const expectedSig = crypto\n    .createHmac('sha256', webhookSecret)\n    .update(`${timestamp}.${rawBody}`)\n    .digest('hex');\n\n  return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSig));\n}\n```\n\n## Idempotency & Delivery Guarantees\n\nWebhooks guarantee **at-least-once delivery**. Due to network retries, your webhook receiver may receive duplicate events. Store event IDs in your database and discard duplicates before processing.",
+    "comparisonPoints": [
+      { "label": "Delivery", "value": "HTTP POST pushed on event (not polled)" },
+      { "label": "Security", "value": "HMAC-SHA256 signature in header — always verify" },
+      { "label": "Idempotency", "value": "Store event IDs to safely deduplicate retries" },
+      { "label": "Response", "value": "Return 200 OK immediately, process async in queue" },
+      { "label": "Replay Protection", "value": "Reject events older than 5 minutes" }
+    ]
+  },
+  {
+    "protocol": "ERROR_HANDLING",
+    "title": "Error Handling & Status Codes",
+    "slug": "error-handling",
+    "sampleEndpoint": "https://api.example.com/v1/orders",
+    "explanation": "## Why Structured Error Handling Matters\n\nA good API error response tells the caller **what happened**, **why it happened**, and **how to fix it**, without exposing sensitive internal stack traces.\n\n## HTTP Status Code Taxonomy\n\n```\n2xx Success       → Operation completed as expected\n3xx Redirection   → Resource moved or cached (304 Not Modified)\n4xx Client Error  → Client sent bad data, lacks auth, or requested missing resource\n5xx Server Error  → Server crashed, timeout, or upstream dependency failed\n```\n\n## Essential Status Codes for APIs\n\n- `400 Bad Request`: Malformed JSON or syntax failure\n- `401 Unauthorized`: Missing or invalid authentication token\n- `403 Forbidden`: Authenticated, but lacking permission to perform action\n- `404 Not Found`: Target resource or endpoint does not exist\n- `409 Conflict`: Resource state conflict (e.g. email already registered)\n- `422 Unprocessable Entity`: Valid JSON syntax, but failed business rule validations\n- `429 Too Many Requests`: Rate limit reached\n- `500 Internal Server Error`: Unhandled server exception\n- `502 / 503 / 504`: Gateway and upstream service failures\n\n## RFC 7807 Problem Details (The Standard)\n\nRFC 7807 defines the standard error envelope `application/problem+json`:\n\n```json\n{\n  \"type\": \"https://api.example.com/errors/validation-failed\",\n  \"title\": \"Validation Failed\",\n  \"status\": 422,\n  \"detail\": \"One or more fields in your request failed validation.\",\n  \"instance\": \"/v1/users/register\",\n  \"invalidParams\": [\n    { \"name\": \"email\", \"reason\": \"Must be a valid email format\" },\n    { \"name\": \"password\", \"reason\": \"Must contain at least 8 characters\" }\n  ],\n  \"traceId\": \"req_902bf81a\"\n}\n```",
+    "comparisonPoints": [
+      { "label": "4xx vs 5xx", "value": "4xx = client fault · 5xx = server fault" },
+      { "label": "Validation Errors", "value": "422 Unprocessable with field-level error details" },
+      { "label": "Standard Format", "value": "RFC 7807 Problem Details (application/problem+json)" },
+      { "label": "Request IDs", "value": "Include traceId for correlated server-side log search" },
+      { "label": "HTTP Semantics", "value": "Never return HTTP 200 with an error object inside" }
+    ]
+  }
+]

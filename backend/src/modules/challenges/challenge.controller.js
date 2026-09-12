@@ -11,7 +11,7 @@ const list = asyncHandler(async (req, res) => {
 });
 
 const getById = asyncHandler(async (req, res) => {
-  const data = await challengeService.getById(req.params.id);
+  const data = await challengeService.getById(req.params.id, req.user?.id);
   res.json({ success: true, data });
 });
 

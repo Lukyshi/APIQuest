@@ -26,10 +26,20 @@ const listByConceptSlug = async (slug, userId) => {
   }));
 };
 
-const getById = async (id) => {
+const getById = async (id, userId) => {
   const challenge = await challengeModel.findById(id);
   if (!challenge) throw ApiError.notFound('Challenge not found');
-  return challenge;
+
+  // Attach completion status so the frontend can lock the UI
+  let isCompleted = false;
+  let isCorrect = false;
+  if (userId) {
+    const done = await challengeModel.findCompleted(userId, id);
+    isCompleted = !!done;
+    isCorrect   = !!done?.isCorrect;
+  }
+
+  return { ...challenge, isCompleted, isCorrect };
 };
 
 const submit = async (challengeId, selectedOptionId, userId) => {
@@ -42,7 +52,14 @@ const submit = async (challengeId, selectedOptionId, userId) => {
   const isCorrect = selectedOption.isCorrect;
   const correctOption = challenge.options.find((o) => o.isCorrect);
 
-  // Record completion (upsert — can retake)
+  // ── Snapshot BEFORE upsert so we know the pre-submission state ──────────
+  let alreadyCorrect = false;
+  if (userId) {
+    const existing = await challengeModel.findCompleted(userId, challengeId);
+    alreadyCorrect = !!(existing?.isCorrect); // was it correctly answered before?
+  }
+
+  // Record / update completion
   if (userId) {
     await challengeModel.recordCompletion(userId, challengeId, isCorrect);
   }
@@ -51,17 +68,12 @@ const submit = async (challengeId, selectedOptionId, userId) => {
   let newBadges = [];
   let updatedProgress = null;
 
-  if (isCorrect && userId) {
-    // Check if this was already correctly completed before (no double XP)
-    const existing = await challengeModel.findCompleted(userId, challengeId);
-    const alreadyCorrect = existing?.isCorrect && existing?.completedAt < new Date();
-
-    if (!alreadyCorrect) {
-      updatedProgress = await progressModel.addXp(userId, challenge.xpReward);
-      await progressModel.updateStreak(userId);
-      newBadges = await progressModel.checkAndAwardBadges(userId);
-    }
-    xpAwarded = alreadyCorrect ? 0 : challenge.xpReward;
+  if (isCorrect && userId && !alreadyCorrect) {
+    // First-time correct answer — award XP, update streak, check badges
+    updatedProgress = await progressModel.addXp(userId, challenge.xpReward);
+    await progressModel.updateStreak(userId);
+    newBadges = await progressModel.checkAndAwardBadges(userId);
+    xpAwarded = challenge.xpReward;
   }
 
   return {
