@@ -12,14 +12,14 @@ export default function RegisterPage() {
   const redirectTarget = searchParams.get('redirect') || '/challenges';
 
   const setAuth = useAuthStore((s) => s.setAuth);
-  const [form, setForm] = useState({ email: '', username: '', password: '' });
+  const [form, setForm] = useState({ email: '', username: '', password: '', _hp_trap: '' });
   const [showPw, setShowPw] = useState(false);
 
   const mutation = useMutation({
     mutationFn: authApi.register,
     onSuccess: (data) => {
       setAuth(data.user, data.accessToken, data.refreshToken);
-      toast.success(`Player profile created! Welcome ${data.user.username}! 🚀`);
+      toast.success(`Player profile created! Welcome ${data.user.username}!`);
       navigate(redirectTarget);
     },
     onError: (err) => {
@@ -29,7 +29,12 @@ export default function RegisterPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    mutation.mutate(form);
+    if (form._hp_trap) {
+      // Honeypot triggered by bot
+      return;
+    }
+    const { _hp_trap, ...payload } = form;
+    mutation.mutate(payload);
   };
 
   return (
@@ -42,6 +47,18 @@ export default function RegisterPage() {
       <p className="text-slate-300 text-xs mb-8">Join API Quest — track XP, unlock nodes, and claim badges.</p>
 
       <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Anti-bot honeypot field */}
+        <div className="hidden" aria-hidden="true" style={{ display: 'none' }}>
+          <input
+            type="text"
+            name="_hp_trap"
+            value={form._hp_trap}
+            onChange={(e) => setForm({ ...form, _hp_trap: e.target.value })}
+            tabIndex={-1}
+            autoComplete="off"
+          />
+        </div>
+
         <div>
           <label htmlFor="reg-email" className="block text-xs font-pixel text-amber-400 mb-2">EMAIL ADDRESS</label>
           <input

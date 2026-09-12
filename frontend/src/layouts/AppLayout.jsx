@@ -3,8 +3,9 @@ import { useAuthStore } from '../features/auth/authStore';
 import { useState } from 'react';
 import {
   BookOpen, Code2, Zap, Trophy, LayoutDashboard,
-  LogOut, Menu, X, Swords, Flame, Gamepad2
+  LogOut, Menu, X, Swords, Flame, Heart
 } from 'lucide-react';
+import { openCookiePreferences } from '../components/CookieConsent';
 
 const navItems = [
   { to: '/concepts',    label: 'Learn',       icon: BookOpen },
@@ -18,18 +19,20 @@ export default function AppLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="min-h-screen flex flex-col bg-surface">
-      {/* ── Arcade Navbar ─────────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-40 border-b border-amber-500/20 bg-surface/90 backdrop-blur-xl">
+    <div className="min-h-screen flex flex-col bg-moss-950 text-slate-100">
+      {/* ── Temple Navbar ─────────────────────────────────────────────────── */}
+      <header className="sticky top-0 z-40 border-b border-emerald-500/20 bg-moss-950/95 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-          {/* Pixel Logo */}
+          {/* Logo — Kept exactly as-is with original arcade yellow/orange styling */}
           <Link to="/" className="flex items-center gap-3 flex-shrink-0 group">
-            <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-gradient-gold shadow-glow text-slate-950 font-bold group-hover:scale-105 transition-transform">
-              <Gamepad2 size={20} className="text-slate-950" />
-            </div>
+            <img
+              src="/logo.png"
+              alt="API Quest logo"
+              className="h-9 w-auto group-hover:scale-105 transition-transform drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]"
+            />
             <span className="font-pixel text-xl text-white font-extrabold tracking-wide">
               API<span className="gradient-text">QUEST</span>
-              <span className="text-[10px] text-amber-400 font-sans block tracking-widest font-normal opacity-80">ARCADE EDITION</span>
+              <span className="text-[10px] text-emerald-400 font-sans block tracking-widest font-normal opacity-85">TEMPLE EDITION</span>
             </span>
           </Link>
 
@@ -41,7 +44,7 @@ export default function AppLayout() {
                 to={to}
                 className={({ isActive }) => `nav-link font-pixel text-sm px-3.5 py-2 ${isActive ? 'active' : ''}`}
               >
-                <Icon size={16} className="text-amber-400" />
+                <Icon size={16} className="text-emerald-400" />
                 {label}
               </NavLink>
             ))}
@@ -51,7 +54,7 @@ export default function AppLayout() {
           <div className="hidden md:flex items-center gap-3">
             {isAuthenticated ? (
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-pixel">
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-pixel">
                   <Flame size={14} className="text-amber-400 fill-amber-400" />
                   <span>PLAYER: <strong className="text-white">{user?.username}</strong></span>
                 </div>
@@ -64,7 +67,7 @@ export default function AppLayout() {
                 </NavLink>
                 <button
                   onClick={logout}
-                  className="btn-ghost py-1.5 px-3 text-xs text-slate-400 hover:text-amber-400"
+                  className="btn-ghost py-1.5 px-3 text-xs text-slate-400 hover:text-emerald-400"
                   aria-label="Log out"
                 >
                   <LogOut size={14} />
@@ -74,7 +77,7 @@ export default function AppLayout() {
               <div className="flex items-center gap-2">
                 <Link to="/login" className="btn-ghost text-xs font-pixel py-2 px-3.5">Log In</Link>
                 <Link to="/register" className="btn-primary text-xs font-pixel py-2 px-4">
-                  <Zap size={14} className="fill-slate-950" /> Join Arcade
+                  <Zap size={14} className="fill-slate-950" /> Join Temple
                 </Link>
               </div>
             )}
@@ -82,7 +85,7 @@ export default function AppLayout() {
 
           {/* Mobile toggle */}
           <button
-            className="md:hidden btn-ghost p-2 text-amber-400"
+            className="md:hidden btn-ghost p-2 text-emerald-400"
             onClick={() => setMobileOpen((v) => !v)}
             aria-label="Toggle menu"
           >
@@ -92,7 +95,7 @@ export default function AppLayout() {
 
         {/* Mobile Menu */}
         {mobileOpen && (
-          <div className="md:hidden border-t border-amber-500/20 bg-surface-1 px-4 py-4 space-y-2 animate-fade-in">
+          <div className="md:hidden border-t border-emerald-500/20 bg-moss-900 px-4 py-4 space-y-2 animate-fade-in shadow-xl">
             {navItems.map(({ to, label, icon: Icon }) => (
               <NavLink
                 key={to}
@@ -105,7 +108,7 @@ export default function AppLayout() {
               </NavLink>
             ))}
             {isAuthenticated ? (
-              <div className="pt-2 border-t border-amber-500/10 space-y-2">
+              <div className="pt-2 border-t border-emerald-500/20 space-y-2">
                 <NavLink to="/dashboard" onClick={() => setMobileOpen(false)} className={({ isActive }) => `nav-link font-pixel w-full ${isActive ? 'active' : ''}`}>
                   <LayoutDashboard size={16} /> Player HUD
                 </NavLink>
@@ -114,9 +117,9 @@ export default function AppLayout() {
                 </button>
               </div>
             ) : (
-              <div className="flex gap-2 pt-2 border-t border-amber-500/10">
+              <div className="flex gap-2 pt-2 border-t border-emerald-500/20">
                 <Link to="/login" onClick={() => setMobileOpen(false)} className="btn-outline flex-1 font-pixel text-center text-xs py-2.5">Log In</Link>
-                <Link to="/register" onClick={() => setMobileOpen(false)} className="btn-primary flex-1 font-pixel text-center text-xs py-2.5">Join Arcade</Link>
+                <Link to="/register" onClick={() => setMobileOpen(false)} className="btn-primary flex-1 font-pixel text-center text-xs py-2.5">Join Temple</Link>
               </div>
             )}
           </div>
@@ -128,21 +131,53 @@ export default function AppLayout() {
         <Outlet />
       </main>
 
-      {/* ── Arcade Retro Footer ──────────────────────────────────────────── */}
-      <footer className="border-t border-amber-500/15 bg-surface-1 py-8 text-center text-xs text-slate-400 font-pixel">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-amber-400">
-            <Gamepad2 size={16} />
-            <span>API QUEST ARCADE © {new Date().getFullYear()}</span>
+      {/* ── Temple Footer ────────────────────────────────────────────────── */}
+      <footer className="border-t border-emerald-500/20 bg-moss-950 py-10 text-xs text-slate-400 font-pixel">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-6">
+          {/* Main Footer Row */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+            <div className="flex items-center gap-3">
+              <Link to="/" className="flex items-center gap-2.5 text-emerald-400 hover:text-emerald-300 transition-colors">
+                <img
+                  src="/logo.png"
+                  alt="API Quest logo"
+                  className="h-6 w-auto"
+                />
+                <span className="font-bold tracking-wider">API QUEST</span>
+              </Link>
+              <span className="text-slate-600 hidden sm:inline">•</span>
+              <span className="text-slate-400 text-[11px] hidden sm:inline">
+                © {new Date().getFullYear()} API Quest. All rights reserved.
+              </span>
+            </div>
+
+            {/* Navigation Links */}
+            <div className="flex flex-wrap items-center justify-center gap-5 text-slate-300">
+              <Link to="/concepts" className="hover:text-emerald-400 transition-colors">Learn</Link>
+              <Link to="/sandbox" className="hover:text-emerald-400 transition-colors">Sandbox</Link>
+              <Link to="/challenges" className="hover:text-emerald-400 transition-colors">Quests</Link>
+              <Link to="/leaderboard" className="hover:text-emerald-400 transition-colors">Leaderboard</Link>
+            </div>
           </div>
-          <p className="text-slate-500 text-xs">
-            Learn REST, SOAP, GraphQL, Auth, Security & Webhooks the fun way.
-          </p>
-          <div className="flex gap-4 text-slate-400">
-            <Link to="/concepts" className="hover:text-amber-400">Learn</Link>
-            <Link to="/sandbox" className="hover:text-amber-400">Sandbox</Link>
-            <Link to="/challenges" className="hover:text-amber-400">Quests</Link>
-            <Link to="/leaderboard" className="hover:text-amber-400">Scores</Link>
+
+          {/* Secondary Footer Row: Legal & Creator Credit */}
+          <div className="pt-4 border-t border-moss-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-500">
+            <div>
+              Created with <Heart size={11} className="inline text-rose-500 fill-rose-500 mx-0.5" /> by <strong className="text-slate-300 font-normal">Luiz</strong>
+            </div>
+
+            <div className="flex items-center gap-4 text-slate-400">
+              <Link to="/privacy" className="hover:text-emerald-400 transition-colors">Privacy Policy</Link>
+              <span>•</span>
+              <Link to="/terms" className="hover:text-emerald-400 transition-colors">Terms & Conditions</Link>
+              <span>•</span>
+              <button
+                onClick={openCookiePreferences}
+                className="hover:text-emerald-400 transition-colors cursor-pointer text-left"
+              >
+                Cookie Preferences
+              </button>
+            </div>
           </div>
         </div>
       </footer>

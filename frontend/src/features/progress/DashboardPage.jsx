@@ -4,20 +4,24 @@ import { progressApi } from './api';
 import { useAuthStore } from '../auth/authStore';
 import {
   Zap, Star, Flame, Trophy, Shield, ArrowRight,
-  BookOpen, Swords, Loader2, Gamepad2
+  BookOpen, Swords, Loader2, Calendar, User
 } from 'lucide-react';
+import {
+  PixelFirstBlood, PixelLink, PixelScroll, PixelBolt,
+  PixelCentury, PixelTrophy
+} from '../../components/PixelIcons';
 
 const BADGE_META = {
-  first_blood:  { emoji: '🩸', label: 'First Blood',   desc: 'Completed your first quest' },
-  rest_rookie:  { emoji: '🔗', label: 'REST Rookie',    desc: 'Mastered REST API concepts' },
-  soap_slinger: { emoji: '📜', label: 'SOAP Slinger',   desc: 'Mastered SOAP protocol' },
-  graphql_guru: { emoji: '⚡', label: 'GraphQL Guru',   desc: 'Mastered GraphQL queries' },
-  century:      { emoji: '💯', label: 'Century',        desc: 'Earned 100+ XP' },
-  legend:       { emoji: '🏆', label: 'Legend',         desc: 'Earned 500+ XP' },
+  first_blood:  { icon: PixelFirstBlood, label: 'First Blood',   desc: 'Completed your first quest' },
+  rest_rookie:  { icon: PixelLink,       label: 'REST Rookie',    desc: 'Mastered REST API concepts' },
+  soap_slinger: { icon: PixelScroll,     label: 'SOAP Slinger',   desc: 'Mastered SOAP protocol' },
+  graphql_guru: { icon: PixelBolt,       label: 'GraphQL Guru',   desc: 'Mastered GraphQL queries' },
+  century:      { icon: PixelCentury,    label: 'Century',        desc: 'Earned 100+ XP' },
+  legend:       { icon: PixelTrophy,     label: 'Legend',         desc: 'Earned 500+ XP' },
 };
 
-function XPBar({ xp }) {
-  const xpInLevel = xp % 100;
+function XPBar({ xpTotal }) {
+  const xpInLevel = xpTotal % 100;
   return (
     <div className="xp-bar mt-2">
       <div className="xp-bar-fill" style={{ width: `${xpInLevel}%` }} />
@@ -27,9 +31,11 @@ function XPBar({ xp }) {
 
 export default function DashboardPage() {
   const user = useAuthStore((s) => s.user);
+
   const { data: progress, isLoading } = useQuery({
     queryKey: ['progress'],
     queryFn: progressApi.getMe,
+    refetchOnMount: true, // always get fresh XP after completing a challenge
   });
 
   if (isLoading) return (
@@ -38,76 +44,121 @@ export default function DashboardPage() {
     </div>
   );
 
-  const xpInLevel = (progress?.xpTotal || 0) % 100;
-  const level = progress?.level || 1;
+  const xpTotal   = progress?.xpTotal   || 0;
+  const level     = progress?.level     || 1;
+  const xpInLevel = xpTotal % 100;
+  const badgesEarned = progress?.badges?.length || 0;
+  const initials  = (user?.username || '??').slice(0, 2).toUpperCase();
+
+  // Format join date if available
+  const joinDate = user?.createdAt
+    ? new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+    : null;
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
-      {/* Header */}
-      <div className="animate-fade-in mb-8">
-        <div className="inline-flex items-center gap-1.5 pill-yellow mb-2">
-          <Gamepad2 size={14} /> PLAYER HUD
-        </div>
-        <h1 className="font-pixel text-3xl sm:text-5xl font-extrabold text-white mb-2">
-          PLAYER: <span className="gradient-text">{user?.username}</span>
-        </h1>
-        <p className="text-slate-300 text-sm">Your quest progress, earned badges, and stats dashboard.</p>
-      </div>
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12 space-y-8">
 
-      {/* Stats row */}
-      <div className="grid sm:grid-cols-3 gap-5 mb-8">
-        {/* Level */}
-        <div className="glass-card p-6 border-2 border-amber-500/30">
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <div className="text-[10px] font-pixel text-slate-400 uppercase mb-1">PLAYER LEVEL</div>
-              <div className="font-pixel text-4xl font-extrabold gradient-text">{level}</div>
+      {/* ── Profile Hero ─────────────────────────────────────────────────────── */}
+      <div className="glass-card p-8 border-2 border-amber-500/30 animate-fade-in">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+
+          {/* Avatar tile */}
+          <div className="relative flex-shrink-0">
+            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-glow">
+              <span className="font-pixel text-2xl font-extrabold text-slate-950">{initials}</span>
             </div>
-            <div className="w-10 h-10 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
-              <Star size={20} className="fill-amber-400" />
+            {/* Level badge */}
+            <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-lg bg-surface-1 border-2 border-amber-500 flex items-center justify-center">
+              <span className="font-pixel text-xs font-bold text-amber-400">{level}</span>
             </div>
           </div>
-          <div className="text-[11px] font-pixel text-slate-400 mb-1">{xpInLevel}/100 XP to Level {level + 1}</div>
-          <XPBar xp={progress?.xpTotal || 0} />
-          <div className="text-[11px] font-pixel text-slate-300 mt-3">TOTAL: <strong className="text-amber-300">{progress?.xpTotal || 0} XP</strong></div>
+
+          {/* Player info */}
+          <div className="flex-1 text-center sm:text-left">
+            <div className="inline-flex items-center gap-1.5 pill-yellow mb-2 text-[10px]">
+              <Star size={10} className="fill-amber-400" /> PLAYER HUD
+            </div>
+            <h1 className="font-pixel text-3xl sm:text-4xl font-extrabold text-white mb-1">
+              {user?.username}
+            </h1>
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-xs text-slate-400 font-pixel mt-2">
+              {user?.email && (
+                <span className="flex items-center gap-1.5">
+                  <User size={11} className="text-amber-400" /> {user.email}
+                </span>
+              )}
+              {joinDate && (
+                <span className="flex items-center gap-1.5">
+                  <Calendar size={11} className="text-amber-400" /> Joined {joinDate}
+                </span>
+              )}
+              <span className="flex items-center gap-1.5">
+                <Trophy size={11} className="text-amber-400" /> {badgesEarned} / {Object.keys(BADGE_META).length} badges
+              </span>
+            </div>
+
+            {/* XP progress inline */}
+            <div className="mt-4 max-w-xs mx-auto sm:mx-0">
+              <div className="flex justify-between text-[10px] font-pixel text-slate-400 mb-1">
+                <span className="flex items-center gap-1">
+                  <Zap size={10} className="text-amber-400" /> {xpTotal} XP TOTAL
+                </span>
+                <span>{xpInLevel}/100 → Level {level + 1}</span>
+              </div>
+              <XPBar xpTotal={xpTotal} />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Stats Row ─────────────────────────────────────────────────────────── */}
+      <div className="grid sm:grid-cols-3 gap-5">
+        {/* Level */}
+        <div className="glass-card p-6 border-2 border-amber-500/30">
+          <div className="flex items-start justify-between mb-3">
+            <div className="text-[10px] font-pixel text-slate-400 uppercase">Player Level</div>
+            <div className="w-9 h-9 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
+              <Star size={18} className="fill-amber-400" />
+            </div>
+          </div>
+          <div className="font-pixel text-4xl font-extrabold gradient-text mb-1">{level}</div>
+          <div className="text-[11px] font-pixel text-slate-400">{xpInLevel}/100 XP to next level</div>
         </div>
 
         {/* Streak */}
         <div className="glass-card p-6 border-2 border-amber-500/30">
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <div className="text-[10px] font-pixel text-slate-400 uppercase mb-1">DAILY STREAK</div>
-              <div className="font-pixel text-4xl font-extrabold text-orange-400">{progress?.streakCount || 0}</div>
+          <div className="flex items-start justify-between mb-3">
+            <div className="text-[10px] font-pixel text-slate-400 uppercase">Daily Streak</div>
+            <div className="w-9 h-9 rounded-lg bg-orange-500/20 border border-orange-500/40 flex items-center justify-center text-orange-400">
+              <Flame size={18} className="fill-orange-400" />
             </div>
-            <div className="w-10 h-10 rounded-lg bg-orange-500/20 border border-orange-500/40 flex items-center justify-center text-orange-400">
-              <Flame size={20} className="fill-orange-400" />
-            </div>
+          </div>
+          <div className="font-pixel text-4xl font-extrabold text-orange-400 mb-1">
+            {progress?.streakCount || 0}
           </div>
           <div className="text-[11px] font-pixel text-slate-400">consecutive days active</div>
         </div>
 
-        {/* Badges count */}
+        {/* Badges */}
         <div className="glass-card p-6 border-2 border-amber-500/30">
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <div className="text-[10px] font-pixel text-slate-400 uppercase mb-1">BADGES EARNED</div>
-              <div className="font-pixel text-4xl font-extrabold text-amber-300">{progress?.badges?.length || 0}</div>
-            </div>
-            <div className="w-10 h-10 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
-              <Shield size={20} />
+          <div className="flex items-start justify-between mb-3">
+            <div className="text-[10px] font-pixel text-slate-400 uppercase">Badges Earned</div>
+            <div className="w-9 h-9 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
+              <Shield size={18} />
             </div>
           </div>
+          <div className="font-pixel text-4xl font-extrabold text-amber-300 mb-1">{badgesEarned}</div>
           <div className="text-[11px] font-pixel text-slate-400">out of {Object.keys(BADGE_META).length} total</div>
         </div>
       </div>
 
-      {/* Badges grid */}
-      <div className="glass-card p-6 mb-8 border-2 border-amber-500/30">
+      {/* ── Achievement Badges ────────────────────────────────────────────────── */}
+      <div className="glass-card p-6 border-2 border-amber-500/30">
         <h2 className="font-pixel text-sm font-bold text-white mb-5 flex items-center gap-2">
           <Trophy size={16} className="text-amber-400" /> ACHIEVEMENT BADGES
         </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-          {Object.entries(BADGE_META).map(([code, { emoji, label, desc }]) => {
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+          {Object.entries(BADGE_META).map(([code, { icon: BadgeIcon, label, desc }]) => {
             const earned = progress?.badges?.some((b) => b.badgeCode === code);
             return (
               <div
@@ -119,15 +170,22 @@ export default function DashboardPage() {
                     : 'border-slate-800 bg-surface-2 opacity-40'
                 }`}
               >
-                <span className="text-3xl mb-2">{emoji}</span>
-                <span className={`text-[11px] font-pixel ${earned ? 'text-amber-300 font-bold' : 'text-slate-500'}`}>{label}</span>
+                <div className="w-10 h-10 flex items-center justify-center mb-2">
+                  <BadgeIcon size={28} />
+                </div>
+                <span className={`text-[10px] font-pixel leading-tight ${earned ? 'text-amber-300 font-bold' : 'text-slate-500'}`}>
+                  {label}
+                </span>
+                {earned && (
+                  <span className="text-[9px] font-pixel text-emerald-400 mt-0.5">EARNED</span>
+                )}
               </div>
             );
           })}
         </div>
       </div>
 
-      {/* Quick Actions */}
+      {/* ── Quick Actions ─────────────────────────────────────────────────────── */}
       <div className="grid sm:grid-cols-3 gap-4">
         {[
           { to: '/concepts',    icon: BookOpen, label: 'Study Library',  sub: 'Learn API theory' },
@@ -138,11 +196,11 @@ export default function DashboardPage() {
             <div className="w-10 h-10 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 group-hover:scale-110 transition-transform">
               <Icon size={18} />
             </div>
-            <div>
+            <div className="flex-1 min-w-0">
               <div className="font-pixel text-xs font-bold text-white">{label}</div>
               <div className="text-[10px] font-pixel text-slate-400">{sub}</div>
             </div>
-            <ArrowRight size={16} className="text-slate-500 ml-auto group-hover:text-amber-400 group-hover:translate-x-1 transition-all" />
+            <ArrowRight size={16} className="text-slate-500 ml-auto group-hover:text-amber-400 group-hover:translate-x-1 transition-all flex-shrink-0" />
           </Link>
         ))}
       </div>

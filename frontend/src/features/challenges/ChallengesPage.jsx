@@ -4,9 +4,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { challengesApi } from './api';
 import { useAuthStore } from '../auth/authStore';
 import {
-  Swords, ArrowRight, Loader2, Lock, Unlock, Star, CheckCircle2,
-  LogIn, UserPlus, X, Zap, Shield, Sparkles, Trophy
+  Swords, ArrowRight, Loader2, Star, CheckCircle2,
+  LogIn, UserPlus, X, Zap, Shield, Sparkles, Trophy, Lock
 } from 'lucide-react';
+import { PixelLock, TopicPixelIcon } from '../../components/PixelIcons';
 
 const TOPICS = [
   { slug: 'rest', name: 'REST' },
@@ -46,7 +47,7 @@ export default function ChallengesPage() {
 
     if (!challenge.isUnlocked && challenge.requiredXp > 0) {
       e.preventDefault();
-      alert(`🔒 Level Locked! You need ${challenge.requiredXp} total XP to unlock this node. Complete earlier challenges to earn XP!`);
+      alert(`Level Locked! You need ${challenge.requiredXp} total XP to unlock this node. Complete earlier challenges to earn XP!`);
       return;
     }
   };
@@ -68,7 +69,7 @@ export default function ChallengesPage() {
       {!isAuthenticated && (
         <div className="mb-8 p-4 rounded-xl glass-card border-amber-500/40 bg-amber-500/10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3 text-amber-300 text-xs font-pixel">
-            <Lock size={18} className="text-amber-400 flex-shrink-0" />
+            <PixelLock size={18} locked={true} className="text-amber-400 flex-shrink-0" />
             <span>VISITOR MODE: Browsing map enabled. Login required to enter challenges & earn XP!</span>
           </div>
           <div className="flex gap-2 flex-shrink-0">
@@ -85,10 +86,11 @@ export default function ChallengesPage() {
             key={t.slug}
             id={`topic-${t.slug}`}
             onClick={() => setActiveTopic(t.slug)}
-            className={`btn text-xs font-pixel py-2 px-4 whitespace-nowrap ${
+            className={`btn text-xs font-pixel py-2 px-4 whitespace-nowrap flex items-center gap-1.5 ${
               activeTopic === t.slug ? 'btn-primary' : 'btn-ghost'
             }`}
           >
+            <TopicPixelIcon topic={t.slug} size={14} />
             {t.name}
           </button>
         ))}
@@ -135,7 +137,7 @@ export default function ChallengesPage() {
                   {isCompleted ? (
                     <CheckCircle2 size={20} className="text-emerald-400" />
                   ) : isLocked ? (
-                    <Lock size={18} className="text-slate-500" />
+                    <PixelLock size={18} locked={true} />
                   ) : (
                     `L${ch.level || idx + 1}`
                   )}
@@ -152,7 +154,9 @@ export default function ChallengesPage() {
                       </span>
                     )}
                     {isCompleted && (
-                      <span className="pill-emerald text-[10px]">⭐ COMPLETED</span>
+                      <span className="pill-emerald text-[10px] flex items-center gap-1">
+                        <CheckCircle2 size={10} /> COMPLETED
+                      </span>
                     )}
                   </div>
                   <p className="text-sm font-semibold text-slate-200 group-hover:text-white line-clamp-2">

@@ -58,14 +58,16 @@ export default function ConceptsPage() {
                 </p>
 
                 {/* Comparison preview */}
-                <div className="space-y-1.5 border-t border-amber-500/15 pt-3 mb-6">
-                  {concept.comparisonPoints?.slice(0, 3).map((pt) => (
-                    <div key={pt.id} className="flex justify-between text-[11px]">
-                      <span className="text-slate-400 font-pixel">{pt.label}:</span>
-                      <span className="text-amber-300 font-medium truncate ml-2 max-w-[150px]">{pt.value}</span>
-                    </div>
-                  ))}
-                </div>
+                {Array.isArray(concept.comparisonPoints) && concept.comparisonPoints.length > 0 && (
+                  <div className="space-y-1.5 border-t border-amber-500/15 pt-3 mb-6">
+                    {concept.comparisonPoints.slice(0, 3).map((pt) => (
+                      <div key={pt.id} className="flex justify-between text-[11px]">
+                        <span className="text-slate-400 font-pixel">{pt.label}:</span>
+                        <span className="text-amber-300 font-medium truncate ml-2 max-w-[150px]">{pt.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <Link

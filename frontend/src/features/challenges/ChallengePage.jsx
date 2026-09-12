@@ -6,19 +6,23 @@ import { useAuthStore } from '../auth/authStore';
 import { toast } from 'react-hot-toast';
 import {
   ArrowLeft, CheckCircle2, XCircle, Zap, Star,
-  Loader2, Swords, ChevronRight, Trophy, Lock, LogIn, UserPlus, X
+  Loader2, Swords, ChevronRight, Trophy, LogIn, UserPlus, X
 } from 'lucide-react';
+import {
+  PixelFirstBlood, PixelLink, PixelScroll, PixelBolt,
+  PixelCentury, PixelTrophy, PixelLock
+} from '../../components/PixelIcons';
 
 const difficultyPill = { EASY: 'pill-emerald', MEDIUM: 'pill-yellow', HARD: 'pill-rose' };
 const typeLabel = { QUIZ: 'Quiz', FIX_REQUEST: 'Fix Request', PREDICT_RESPONSE: 'Predict Response' };
 
 const BADGE_META = {
-  first_blood:  { emoji: '🩸', label: 'First Blood' },
-  rest_rookie:  { emoji: '🔗', label: 'REST Rookie' },
-  soap_slinger: { emoji: '📜', label: 'SOAP Slinger' },
-  graphql_guru: { emoji: '⚡', label: 'GraphQL Guru' },
-  century:      { emoji: '💯', label: 'Century' },
-  legend:       { emoji: '🏆', label: 'Legend' },
+  first_blood:  { icon: PixelFirstBlood, label: 'First Blood' },
+  rest_rookie:  { icon: PixelLink,       label: 'REST Rookie' },
+  soap_slinger: { icon: PixelScroll,     label: 'SOAP Slinger' },
+  graphql_guru: { icon: PixelBolt,       label: 'GraphQL Guru' },
+  century:      { icon: PixelCentury,    label: 'Century' },
+  legend:       { icon: PixelTrophy,     label: 'Legend' },
 };
 
 export default function ChallengePage() {
@@ -30,18 +34,23 @@ export default function ChallengePage() {
   const [selected, setSelected] = useState(null);
   const [result, setResult] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [forceRetry, setForceRetry] = useState(false);
 
   const { data: challenge, isLoading } = useQuery({
     queryKey: ['challenge', id],
     queryFn: () => challengesApi.getById(id),
   });
 
+  // Pre-populate answered state if challenge was already completed
+  const alreadyCompleted = challenge?.isCompleted && !forceRetry;
+  const answeredCorrectly = challenge?.isCorrect;
+
   const mutation = useMutation({
     mutationFn: (optionId) => challengesApi.submit(id, optionId),
     onSuccess: (data) => {
       setResult(data);
       if (data.isCorrect) {
-        toast.success(`Correct! +${data.xpAwarded} XP earned`, { icon: '⚡' });
+        toast.success(`Correct! +${data.xpAwarded} XP earned`);
         qc.invalidateQueries({ queryKey: ['progress'] });
       } else {
         toast.error('Not quite — review the explanation below.');
@@ -80,7 +89,7 @@ export default function ChallengePage() {
     </div>
   );
 
-  const answered = !!result;
+  const answered = !!result || alreadyCompleted;
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
@@ -172,7 +181,8 @@ export default function ChallengePage() {
             {mutation.isPending ? <Loader2 size={16} className="animate-spin" /> : <ChevronRight size={16} />}
             {mutation.isPending ? 'SUBMITTING...' : 'SUBMIT ANSWER'}
           </button>
-        ) : (
+        ) : result ? (
+          // Live result from this session
           <div className={`rounded-xl p-6 border ${result.isCorrect ? 'border-emerald-500/40 bg-emerald-500/10' : 'border-rose-500/40 bg-rose-500/10'}`}>
             <div className="flex items-center gap-2 font-pixel text-base mb-3">
               {result.isCorrect ? (
@@ -201,11 +211,15 @@ export default function ChallengePage() {
                   <Trophy size={14} /> NEW BADGE UNLOCKED!
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {result.newBadges.map((code) => (
-                    <span key={code} className="pill-yellow text-xs">
-                      {BADGE_META[code]?.emoji} {BADGE_META[code]?.label || code}
-                    </span>
-                  ))}
+                  {result.newBadges.map((code) => {
+                    const meta = BADGE_META[code];
+                    const IconComponent = meta?.icon || PixelTrophy;
+                    return (
+                      <span key={code} className="pill-yellow text-xs flex items-center gap-1.5">
+                        <IconComponent size={14} /> {meta?.label || code}
+                      </span>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -217,6 +231,41 @@ export default function ChallengePage() {
               <Link to="/dashboard" className="btn-primary flex-1 text-xs font-pixel text-center py-2.5">
                 <Star size={14} /> VIEW PLAYER HUD
               </Link>
+            </div>
+          </div>
+        ) : (
+          // Loaded from DB — already completed before this session
+          <div className={`rounded-xl p-6 border ${answeredCorrectly ? 'border-emerald-500/40 bg-emerald-500/10' : 'border-slate-700 bg-surface-2'}`}>
+            <div className="flex items-center gap-2 font-pixel text-sm mb-3">
+              {answeredCorrectly ? (
+                <>
+                  <CheckCircle2 size={18} className="text-emerald-400" />
+                  <span className="text-emerald-300 font-bold">QUEST ALREADY COMPLETED ✓</span>
+                </>
+              ) : (
+                <>
+                  <XCircle size={18} className="text-slate-400" />
+                  <span className="text-slate-300 font-bold">PREVIOUSLY ATTEMPTED — INCORRECT</span>
+                </>
+              )}
+            </div>
+            <p className="text-xs text-slate-400 font-pixel mb-4">
+              {answeredCorrectly
+                ? 'You already answered this correctly. XP has been awarded.'
+                : 'You answered this incorrectly before. Review the options and try again.'}
+            </p>
+            <div className="flex gap-3">
+              <Link to="/challenges" className="btn-ghost flex-1 text-xs font-pixel text-center py-2.5">
+                ← ALL QUESTS
+              </Link>
+              {!answeredCorrectly && (
+                <button
+                  onClick={() => { setForceRetry(true); setSelected(null); }}
+                  className="btn-primary flex-1 text-xs font-pixel py-2.5"
+                >
+                  TRY AGAIN
+                </button>
+              )}
             </div>
           </div>
         )}
@@ -234,7 +283,7 @@ export default function ChallengePage() {
             </button>
 
             <div className="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 mx-auto mb-4">
-              <Lock size={24} />
+              <PixelLock size={24} locked={true} />
             </div>
 
             <h3 className="font-pixel text-xl font-bold text-white text-center mb-2">

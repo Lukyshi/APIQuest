@@ -95,7 +95,7 @@ export default function SandboxPage() {
     },
     onSuccess: (data) => {
       setResult(data);
-      toast.success(`Response received in ${data.timing?.ms}ms`, { icon: '⚡' });
+      toast.success(`Response received in ${data.timing?.ms}ms`);
     },
     onError: (err) => toast.error(err.response?.data?.message || 'Request execution failed'),
   });
@@ -126,7 +126,7 @@ export default function SandboxPage() {
       setSoapA(preset.a);
       setSoapB(preset.b);
     }
-    toast.success(`Preset loaded: ${preset.label}`, { icon: '🎮' });
+    toast.success(`Preset loaded: ${preset.label}`);
   };
 
   const tabIcons = { REST: Globe, GraphQL: Zap, SOAP: FileCode };

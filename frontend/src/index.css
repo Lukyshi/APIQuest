@@ -8,34 +8,35 @@
   *, *::before, *::after { box-sizing: border-box; }
 
   :root {
-    --bg-primary:   #0d0d12;
-    --bg-surface-1: #14141c;
-    --bg-surface-2: #1f1f2b;
-    --bg-surface-3: #2a2a3b;
-    --yellow-500:   #f59e0b;
-    --yellow-400:   #fbbf24;
-    --orange-500:   #f97316;
-    --orange-400:   #fb923c;
-    --text-primary: #f8fafc;
-    --text-muted:   #94a3b8;
-    --border:       rgba(245, 158, 11, 0.22);
-    --border-hover: rgba(249, 115, 22, 0.55);
+    --bg-primary:   #060d08; /* Deep Moss Green */
+    --bg-surface-1: #0d1a11; /* Dark Olive */
+    --bg-surface-2: #14271a; /* Weathered Stone Surface */
+    --bg-surface-3: #1c3423; /* Elevated Stone Panel */
+    --emerald-400:  #34d399; /* Bright Emerald */
+    --emerald-500:  #10b981;
+    --amber-400:    #fbbf24; /* Glowing Amber / Gold */
+    --amber-500:    #f59e0b;
+    --stone-border: rgba(52, 211, 153, 0.22);
+    --stone-hover:  rgba(245, 158, 11, 0.45);
+    --text-primary: #f1f5f9;
+    --text-stone:   #94a3b8;
+    --text-amber:   #fbbf24;
   }
 
   html { scroll-behavior: smooth; }
 
   body {
-    @apply bg-surface text-slate-100 font-sans antialiased;
-    background: var(--bg-primary);
+    @apply bg-moss-950 text-slate-100 font-sans antialiased;
+    background-color: var(--bg-primary);
     min-height: 100vh;
   }
 
-  ::selection { background: rgba(245, 158, 11, 0.35); color: #fff; }
+  ::selection { background: rgba(16, 185, 129, 0.35); color: #fff; }
 
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: var(--bg-surface-1); }
   ::-webkit-scrollbar-thumb { background: var(--bg-surface-3); border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--yellow-500); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--emerald-400); }
 }
 
 @layer components {
@@ -50,107 +51,192 @@
     line-height: 1.5;
   }
 
-  /* ── Arcade Glass Card ─────────────────────────────────────────────────── */
-  .glass-card {
-    background: rgba(20, 20, 28, 0.85);
-    backdrop-filter: blur(16px);
-    border: 1px solid var(--border);
-    border-radius: 0.85rem;
-    transition: all 0.2s ease-in-out;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-  }
-  .glass-card:hover {
-    border-color: var(--border-hover);
-    box-shadow: 0 0 25px rgba(245, 158, 11, 0.18);
-  }
-
-  .pixel-card {
-    background: #14141c;
-    border: 2px solid #f59e0b;
+  /* ── Jungle Carved Stone Containers ──────────────────────────────────── */
+  .stone-card, .glass-card {
+    position: relative;
+    background: linear-gradient(145deg, rgba(17, 34, 23, 0.9) 0%, rgba(10, 20, 13, 0.95) 100%);
+    backdrop-filter: blur(12px);
+    border: 2px solid rgba(52, 211, 153, 0.22);
     border-radius: 0.75rem;
-    box-shadow: 4px 4px 0px #000, 0 0 15px rgba(245, 158, 11, 0.2);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-  }
-  .pixel-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 6px 6px 0px #000, 0 0 25px rgba(249, 115, 22, 0.35);
+    box-shadow: 
+      0 10px 30px rgba(0, 0, 0, 0.6),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      inset 0 0 15px rgba(0, 0, 0, 0.4);
+    transition: all 0.25s ease;
   }
 
-  /* ── Retro Arcade Buttons ────────────────────────────────────────────────── */
+  .stone-card:hover, .glass-card:hover {
+    border-color: rgba(52, 211, 153, 0.45);
+    box-shadow: 
+      0 12px 35px rgba(0, 0, 0, 0.7),
+      0 0 20px rgba(16, 185, 129, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  /* Ruin stone panel with corner bolts & pixel edge */
+  .pixel-card, .ruin-card {
+    position: relative;
+    background: linear-gradient(135deg, #132418 0%, #0c170f 100%);
+    border: 2px solid #2d4f37;
+    border-radius: 0.6rem;
+    box-shadow: 
+      4px 4px 0px #030804,
+      0 0 16px rgba(16, 185, 129, 0.12),
+      inset 1px 1px 0px rgba(255, 255, 255, 0.07);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+
+  .pixel-card:hover, .ruin-card:hover {
+    transform: translateY(-2px);
+    border-color: #34d399;
+    box-shadow: 
+      5px 5px 0px #030804,
+      0 0 24px rgba(52, 211, 153, 0.25);
+  }
+
+  /* Stone Rivet / Corner Bolt Decoration */
+  .stone-rivet {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #476652;
+    border: 1px solid #142419;
+    box-shadow: 1px 1px 0 #050d07, inset 1px 1px 0 #739980;
+    pointer-events: none;
+  }
+  .rivet-tl { top: 6px; left: 6px; }
+  .rivet-tr { top: 6px; right: 6px; }
+  .rivet-bl { bottom: 6px; left: 6px; }
+  .rivet-br { bottom: 6px; right: 6px; }
+
+  /* Corner Moss Overgrowth */
+  .moss-corner-tl {
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    width: 14px;
+    height: 14px;
+    background: radial-gradient(circle at 0% 0%, #34d399 0%, #10b981 40%, transparent 80%);
+    opacity: 0.65;
+    pointer-events: none;
+    border-top-left-radius: 0.6rem;
+  }
+  .moss-corner-br {
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+    width: 14px;
+    height: 14px;
+    background: radial-gradient(circle at 100% 100%, #10b981 0%, #047857 40%, transparent 80%);
+    opacity: 0.65;
+    pointer-events: none;
+    border-bottom-right-radius: 0.6rem;
+  }
+
+  /* ── Jungle & Temple Buttons ─────────────────────────────────────────────── */
   .btn {
     @apply inline-flex items-center justify-center gap-2 font-bold rounded-xl px-5 py-2.5 text-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed select-none;
   }
 
+  /* Glowing Amber/Gold CTA Button */
   .btn-primary {
     @apply btn text-slate-950 font-extrabold;
-    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #f97316 100%);
-    box-shadow: 0 0 20px rgba(245, 158, 11, 0.4), 0 2px 4px rgba(0,0,0,0.5);
-    border: 1px solid #fde047;
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.4), 0 3px 0px #78350f;
+    border: 1px solid #fde68a;
   }
   .btn-primary:hover:not(:disabled) {
     transform: translateY(-1px);
-    box-shadow: 0 0 30px rgba(249, 115, 22, 0.6), 0 4px 8px rgba(0,0,0,0.6);
+    box-shadow: 0 0 30px rgba(251, 191, 36, 0.6), 0 4px 0px #78350f;
   }
-  .btn-primary:active:not(:disabled) { transform: translateY(1px); }
+  .btn-primary:active:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.4), 0 1px 0px #78350f;
+  }
 
+  /* Bright Emerald Arcade Button */
+  .btn-emerald {
+    @apply btn text-slate-950 font-extrabold font-pixel;
+    background: linear-gradient(135deg, #34d399 0%, #10b981 50%, #059669 100%);
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.45), 0 3px 0px #064e3b;
+    border: 1px solid #6ee7b7;
+  }
+  .btn-emerald:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 0 30px rgba(52, 211, 153, 0.65), 0 4px 0px #064e3b;
+  }
+  .btn-emerald:active:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.4), 0 1px 0px #064e3b;
+  }
+
+  /* Carved Stone Arcade Button */
   .btn-arcade {
-    @apply btn text-amber-300 font-pixel font-bold uppercase tracking-wider text-xs px-6 py-3 rounded-lg border-2 border-amber-400;
-    background: #1f1f2b;
-    box-shadow: 3px 3px 0px #000;
+    @apply btn text-emerald-300 font-pixel font-bold uppercase tracking-wider text-xs px-6 py-3 rounded-lg border-2 border-emerald-500/60;
+    background: #112217;
+    box-shadow: 3px 3px 0px #030804;
   }
   .btn-arcade:hover:not(:disabled) {
-    background: #f59e0b;
-    color: #0d0d12;
-    box-shadow: 4px 4px 0px #000, 0 0 20px rgba(245, 158, 11, 0.5);
+    background: #10b981;
+    color: #060d08;
+    border-color: #34d399;
+    box-shadow: 4px 4px 0px #030804, 0 0 20px rgba(52, 211, 153, 0.5);
     transform: translate(-1px, -1px);
   }
 
   .btn-ghost {
-    @apply btn text-slate-300 border border-transparent hover:border-amber-500/40 hover:text-amber-400 hover:bg-surface-2;
+    @apply btn text-slate-300 border border-transparent hover:border-emerald-500/40 hover:text-emerald-400 hover:bg-olive-800/60;
   }
 
   .btn-outline {
-    @apply btn text-amber-400 border border-amber-500/40 hover:bg-amber-500/10 hover:text-white hover:border-amber-400;
+    @apply btn text-emerald-400 border border-emerald-500/40 hover:bg-emerald-500/15 hover:text-white hover:border-emerald-400;
   }
 
   /* ── Inputs ─────────────────────────────────────────────────────────────── */
   .input {
     @apply w-full rounded-xl px-4 py-3 text-sm text-slate-100 placeholder-slate-500 outline-none transition-all duration-200;
     background: var(--bg-surface-2);
-    border: 1px solid var(--border);
+    border: 1px solid var(--stone-border);
   }
   .input:focus {
-    border-color: var(--yellow-500);
-    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+    border-color: var(--emerald-400);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
   }
 
   .textarea {
     @apply input resize-none font-mono text-xs leading-relaxed;
   }
 
-  /* ── Yellow & Orange Badge Pills ────────────────────────────────────────── */
+  /* ── Jungle & Temple Badge Pills ────────────────────────────────────────── */
   .pill {
     @apply inline-flex items-center gap-1.5 text-xs font-bold rounded-md px-2.5 py-1 uppercase tracking-wide font-pixel;
   }
-  .pill-yellow  { @apply pill bg-amber-500/20 text-amber-300 border border-amber-500/40; }
-  .pill-orange  { @apply pill bg-orange-500/20 text-orange-300 border border-orange-500/40; }
   .pill-emerald { @apply pill bg-emerald-500/20 text-emerald-300 border border-emerald-500/40; }
-  .pill-slate   { @apply pill bg-slate-500/20 text-slate-300 border border-slate-500/40; }
+  .pill-amber   { @apply pill bg-amber-500/20 text-amber-300 border border-amber-500/40; }
+  .pill-yellow  { @apply pill bg-amber-500/20 text-amber-300 border border-amber-500/40; }
+  .pill-orange  { @apply pill bg-emerald-500/20 text-emerald-300 border border-emerald-500/40; }
+  .pill-moss    { @apply pill bg-moss-700/40 text-emerald-400 border border-emerald-500/30; }
+  .pill-slate   { @apply pill bg-slate-700/30 text-slate-300 border border-slate-600/40; }
   .pill-rose    { @apply pill bg-rose-500/20 text-rose-300 border border-rose-500/40; }
-  .pill-brand   { @apply pill-yellow; }
-  .pill-violet  { @apply pill-orange; }
-  .pill-amber   { @apply pill-yellow; }
+  .pill-brand   { @apply pill-amber; }
 
   /* ── Text Gradients ──────────────────────────────────────────────────────── */
   .gradient-text {
-    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #f97316 100%);
+    background: linear-gradient(135deg, #34d399 0%, #10b981 40%, #fbbf24 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
-  .gradient-orange-text {
-    background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+  .gradient-amber-text {
+    background: linear-gradient(135deg, #fde68a 0%, #fbbf24 50%, #f59e0b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .gradient-emerald-text {
+    background: linear-gradient(135deg, #6ee7b7 0%, #34d399 50%, #10b981 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -158,38 +244,38 @@
 
   /* ── XP HUD Bar ──────────────────────────────────────────────────────────── */
   .xp-bar {
-    @apply w-full h-2.5 rounded-full overflow-hidden border border-amber-500/20;
-    background: var(--bg-surface-3);
+    @apply w-full h-2.5 rounded-full overflow-hidden border border-emerald-500/30;
+    background: #08110b;
   }
   .xp-bar-fill {
     @apply h-full rounded-full transition-all duration-700 ease-out;
-    background: linear-gradient(90deg, #fbbf24, #f97316);
-    box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+    background: linear-gradient(90deg, #10b981, #34d399, #fbbf24);
+    box-shadow: 0 0 12px rgba(52, 211, 153, 0.6);
   }
 
   /* ── Code Block ─────────────────────────────────────────────────────────── */
   .code-block {
     @apply font-mono text-xs leading-relaxed rounded-xl p-4 overflow-auto;
-    background: #09090e;
-    border: 1px solid var(--border);
+    background: #050a06;
+    border: 1px solid rgba(52, 211, 153, 0.2);
     color: #f1f5f9;
     max-height: 400px;
   }
 
   /* ── Nav Link ────────────────────────────────────────────────────────────── */
   .nav-link {
-    @apply flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold text-slate-400 hover:text-amber-400 hover:bg-surface-2 transition-all duration-150;
+    @apply flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold text-slate-300 hover:text-emerald-300 hover:bg-olive-800/50 transition-all duration-150;
   }
   .nav-link.active {
-    @apply text-amber-300 bg-amber-500/15 border border-amber-500/30 font-bold;
-    box-shadow: 0 0 12px rgba(245, 158, 11, 0.15);
+    @apply text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 font-bold;
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
   }
 }
 
 @layer utilities {
   .text-balance { text-wrap: balance; }
-  .glow { box-shadow: 0 0 20px rgba(245, 158, 11, 0.35); }
-  .glow-lg { box-shadow: 0 0 40px rgba(249, 115, 22, 0.45); }
+  .glow-emerald { box-shadow: 0 0 20px rgba(52, 211, 153, 0.35); }
+  .glow-amber { box-shadow: 0 0 20px rgba(245, 158, 11, 0.35); }
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 }

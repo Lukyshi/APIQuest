@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useParams, Link } from 'react-router-dom';
 import { conceptsApi } from './api';
 import { ArrowLeft, Code2, Swords, Loader2, CheckCircle, Zap } from 'lucide-react';
+import { ConceptDiagram } from '../../components/ConceptDiagrams';
 
 const difficultyPill = {
   EASY:   'pill-emerald',
@@ -99,16 +100,18 @@ export default function ConceptDetailPage() {
 
       <div className="grid lg:grid-cols-3 gap-8">
         {/* Main content */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 space-y-6">
           <div className="glass-card p-8 animate-slide-up border-amber-500/20">
             <MarkdownRenderer content={concept.explanation} />
           </div>
+          {/* Architecture diagram */}
+          <ConceptDiagram slug={concept.slug} />
         </div>
 
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Comparison points */}
-          {concept.comparisonPoints?.length > 0 && (
+          {Array.isArray(concept.comparisonPoints) && concept.comparisonPoints.length > 0 && (
             <div className="glass-card p-6 animate-slide-up border-amber-500/20">
               <h3 className="font-pixel text-sm font-bold text-white mb-4 flex items-center gap-2">
                 <CheckCircle size={16} className="text-amber-400" /> QUICK FACTS

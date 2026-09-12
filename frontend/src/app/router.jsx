@@ -14,6 +14,9 @@ import ChallengesPage  from '../features/challenges/ChallengesPage';
 import ChallengePage   from '../features/challenges/ChallengePage';
 import DashboardPage   from '../features/progress/DashboardPage';
 import LeaderboardPage from '../features/leaderboard/LeaderboardPage';
+import PrivacyPage     from '../features/legal/PrivacyPage';
+import TermsPage       from '../features/legal/TermsPage';
+import CookieConsent   from '../components/CookieConsent';
 
 const ProtectedRoute = ({ children }) => {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
@@ -44,11 +47,14 @@ export default function AppRouter() {
           <Route path="/challenges" element={<ChallengesPage />} />
           <Route path="/challenges/:id" element={<ChallengePage />} />
           <Route path="/leaderboard" element={<LeaderboardPage />} />
+          <Route path="/privacy"     element={<PrivacyPage />} />
+          <Route path="/terms"       element={<TermsPage />} />
           <Route path="/dashboard"   element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      <CookieConsent />
     </BrowserRouter>
   );
 }
