@@ -8,6 +8,7 @@ const sandboxRoutes     = require('../modules/sandbox/sandbox.routes');
 const challengeRoutes   = require('../modules/challenges/challenge.routes');
 const progressRoutes    = require('../modules/progress/progress.routes');
 const leaderboardRoutes = require('../modules/leaderboard/leaderboard.routes');
+const missionRoutes     = require('../modules/missions/mission.routes');
 
 const router = Router();
 
@@ -20,5 +21,7 @@ router.use('/sandbox',     sandboxRoutes);
 router.use('/challenges',  challengeRoutes);
 router.use('/progress',    progressRoutes);
 router.use('/leaderboard', leaderboardRoutes);
+router.use('/missions',    missionRoutes);
 
 module.exports = router;
+

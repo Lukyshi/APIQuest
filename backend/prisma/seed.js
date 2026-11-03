@@ -427,12 +427,249 @@ const challengesData = {
   ],
 };
 
+// ─── Mission Seed Data ─────────────────────────────────────────────────────────
+
+const missionsData = [
+  // ── DEBUGGER MISSIONS ───────────────────────────────────────────────────────
+  {
+    slug: 'debug-plural-endpoint',
+    title: 'The Broken Student API',
+    category: 'REST',
+    type: 'DEBUGGER',
+    difficulty: 'BEGINNER',
+    order: 1,
+    xpReward: 100,
+    coinReward: 25,
+    description: 'The school portal is broken — students cannot retrieve their profiles. Your job: find the bug in the API request and fix it.',
+    scenarioContext: 'A junior developer wrote `GET /student/25` to fetch a student profile. The API returns 404. The documentation says the resource is `/students` (plural). Investigate and fix the endpoint.',
+    initialRequest: { method: 'GET', endpoint: '/student/25', headers: {}, body: '' },
+    expectedOutcome: {
+      method: 'GET',
+      endpointPattern: '/students/25',
+      forbiddenEndpoints: ['/student/'],
+      expectedStatusRange: [200, 299],
+    },
+    hints: [
+      'Think about how REST APIs name their resource collections. Singular or plural?',
+      'Compare `/student/25` with `/students/25`. REST convention uses plural nouns for collections. Try the plural form.',
+    ],
+  },
+  {
+    slug: 'debug-wrong-method-create',
+    title: 'Ghost User Registration',
+    category: 'REST',
+    type: 'DEBUGGER',
+    difficulty: 'BEGINNER',
+    order: 2,
+    xpReward: 100,
+    coinReward: 25,
+    description: 'The signup API is silently failing — users sign up but no account is created. Investigate the HTTP method being used.',
+    scenarioContext: 'The registration form sends `GET /users` with the user data in the body. The server returns 200 but creates nothing — because GET requests should never carry a body. Which method actually creates resources?',
+    initialRequest: { method: 'GET', endpoint: '/users', headers: { 'Content-Type': 'application/json' }, body: '{"name":"Alice","email":"alice@example.com"}' },
+    expectedOutcome: {
+      method: 'POST',
+      endpointPattern: '/users',
+      expectedStatusRange: [200, 299],
+    },
+    hints: [
+      'GET is a read-only method — it retrieves data and should not modify server state. Which HTTP method is designed to create new resources?',
+      'The correct method is POST. POST /users with a JSON body is the standard way to create a new user in a REST API.',
+    ],
+  },
+  {
+    slug: 'debug-missing-content-type',
+    title: 'The 415 Mystery',
+    category: 'REST',
+    type: 'DEBUGGER',
+    difficulty: 'EXPLORER',
+    order: 3,
+    xpReward: 100,
+    coinReward: 30,
+    description: 'The product creation endpoint keeps returning 415 Unsupported Media Type. The request looks right — but something about how you\'re sending the data is wrong.',
+    scenarioContext: 'A POST request to `/products` has a valid JSON body and correct method, but the Content-Type header is set to `text/plain`. The server refuses to parse it. Fix the header.',
+    initialRequest: { method: 'POST', endpoint: '/products', headers: { 'Content-Type': 'text/plain' }, body: '{"name":"Widget","price":9.99}' },
+    expectedOutcome: {
+      method: 'POST',
+      endpointPattern: '/products',
+      requiredHeaders: { 'Content-Type': 'application/json' },
+      expectedStatusRange: [200, 299],
+    },
+    hints: [
+      'HTTP 415 Unsupported Media Type means the server cannot process the format you sent. Check your Content-Type header — does it match what you\'re actually sending?',
+      'You are sending JSON, so the Content-Type must be `application/json`. Change `text/plain` to `application/json`.',
+    ],
+  },
+  {
+    slug: 'debug-missing-auth-header',
+    title: 'The Unauthorized Profile',
+    category: 'Authentication',
+    type: 'DEBUGGER',
+    difficulty: 'EXPLORER',
+    order: 4,
+    xpReward: 100,
+    coinReward: 30,
+    description: 'The profile endpoint returns 401 Unauthorized. You have a JWT token — but something about how you\'re sending it is wrong.',
+    scenarioContext: 'The client sends `GET /profile` with `Authorization: token_abc123`. The server rejects it. Bearer authentication has a specific format — is it correct?',
+    initialRequest: { method: 'GET', endpoint: '/profile', headers: { 'Authorization': 'token_abc123' }, body: '' },
+    expectedOutcome: {
+      method: 'GET',
+      endpointPattern: '/profile',
+      requiredHeaders: { 'Authorization': 'Bearer ' },
+      expectedStatusRange: [200, 299],
+    },
+    hints: [
+      'HTTP 401 means your credentials were not accepted. Look closely at the Authorization header format. Bearer tokens have a specific prefix.',
+      'The correct format is `Authorization: Bearer <token>`. You must include the word "Bearer " (with a space) before the token value.',
+    ],
+  },
+  {
+    slug: 'debug-invalid-json-body',
+    title: 'Malformed JSON Payload',
+    category: 'REST',
+    type: 'DEBUGGER',
+    difficulty: 'BUILDER',
+    order: 5,
+    xpReward: 100,
+    coinReward: 35,
+    description: 'The order submission endpoint returns 400 Bad Request. The JSON body has a syntax error that prevents the server from parsing it.',
+    scenarioContext: 'A POST to `/orders` with a body that has a trailing comma in the JSON object — which is invalid JSON syntax. Find and fix the syntax error.',
+    initialRequest: { method: 'POST', endpoint: '/orders', headers: { 'Content-Type': 'application/json' }, body: '{"productId":"abc123","quantity":2,}' },
+    expectedOutcome: {
+      method: 'POST',
+      endpointPattern: '/orders',
+      requiredHeaders: { 'Content-Type': 'application/json' },
+      requiredBodyKeys: ['productId', 'quantity'],
+      expectedStatusRange: [200, 299],
+    },
+    hints: [
+      'The server returned 400 Bad Request — the request was malformed. Look carefully at the JSON body. JSON does not allow trailing commas after the last property.',
+      'Remove the comma after `"quantity":2`. Valid JSON: `{"productId":"abc123","quantity":2}`. Trailing commas are valid in JavaScript but NOT in JSON.',
+    ],
+  },
+
+  // ── EXPERIMENT MISSIONS ─────────────────────────────────────────────────────
+  {
+    slug: 'exp-get-vs-post',
+    title: 'GET vs POST: The Difference',
+    category: 'REST',
+    type: 'EXPERIMENT',
+    difficulty: 'BEGINNER',
+    order: 6,
+    xpReward: 75,
+    coinReward: 20,
+    description: 'See for yourself what happens when you use GET instead of POST on a create endpoint — and understand why it matters.',
+    scenarioContext: 'The `/users` endpoint supports both GET (list all users) and POST (create a user). Send a GET request first and observe the response. Then send a POST with a JSON body and compare.',
+    initialRequest: { method: 'GET', endpoint: '/users', headers: {}, body: '' },
+    expectedOutcome: {
+      method: 'GET',
+      endpointPattern: '/users',
+      expectedStatusRange: [200, 299],
+    },
+    hints: [
+      'Try sending `GET /users` first — you should get a list of existing users back, not a creation confirmation.',
+      'A GET request retrieves data; a POST creates it. The response data shape will be completely different.',
+    ],
+  },
+  {
+    slug: 'exp-query-params',
+    title: 'Filtering with Query Parameters',
+    category: 'REST',
+    type: 'EXPERIMENT',
+    difficulty: 'EXPLORER',
+    order: 7,
+    xpReward: 75,
+    coinReward: 20,
+    description: 'The product list returns 100 items. Learn to filter results using query parameters instead of fetching everything.',
+    scenarioContext: 'Fetch `GET /products` first — you\'ll get all results. Now try fetching with a query param like `?limit=5`. Compare the response size. Query parameters let you control what data you receive without changing the endpoint.',
+    initialRequest: { method: 'GET', endpoint: '/products', headers: {}, body: '' },
+    expectedOutcome: {
+      method: 'GET',
+      endpointPattern: '/products',
+      expectedStatusRange: [200, 299],
+    },
+    hints: [
+      'Query parameters are added after the `?` in a URL. For example: `/products?limit=5` returns only 5 products.',
+      'Try `/products?limit=5&page=1` to get the first page of 5 results. This is standard REST pagination.',
+    ],
+  },
+  {
+    slug: 'exp-delete-resource',
+    title: 'Deleting a Resource',
+    category: 'REST',
+    type: 'EXPERIMENT',
+    difficulty: 'BUILDER',
+    order: 8,
+    xpReward: 75,
+    coinReward: 25,
+    description: 'Deletion is irreversible — you need to know exactly which method and what endpoint format to use. Send the correct DELETE request.',
+    scenarioContext: 'A stale test user with ID `1` needs to be removed from the system. Build the correct DELETE request — the right method, the right endpoint (resource URL with ID), and verify the response.',
+    initialRequest: { method: 'GET', endpoint: '/users/1', headers: {}, body: '' },
+    expectedOutcome: {
+      method: 'DELETE',
+      endpointPattern: '/users/1',
+      expectedStatusRange: [200, 299],
+    },
+    hints: [
+      'Deleting a specific resource uses the DELETE method with the resource\'s full URL: `DELETE /users/1` (not `DELETE /users` which would attempt to delete everything).',
+      'Change the method from GET to DELETE. The endpoint stays the same: `/users/1`. A successful DELETE typically returns 200, 204, or 200 with a confirmation message.',
+    ],
+  },
+
+  // ── FULL MISSIONS ───────────────────────────────────────────────────────────
+  {
+    slug: 'mission-auth-chain',
+    title: 'Authenticate and Access',
+    category: 'Authentication',
+    type: 'MISSION',
+    difficulty: 'ADVANCED',
+    order: 9,
+    xpReward: 150,
+    coinReward: 50,
+    description: 'The protected dashboard endpoint is returning 401. You have credentials — but you need to authenticate first and then use the token correctly.',
+    scenarioContext: 'The `/dashboard` endpoint requires a valid Bearer token. First understand the authentication flow: credentials go to `/auth/login` to get a token, then that token goes in the Authorization header of subsequent requests. Simulate the second step — sending a request with a properly formatted Bearer token.',
+    initialRequest: { method: 'GET', endpoint: '/dashboard', headers: {}, body: '' },
+    expectedOutcome: {
+      method: 'GET',
+      endpointPattern: '/dashboard',
+      requiredHeaders: { 'Authorization': 'Bearer ' },
+    },
+    hints: [
+      'The 401 response means your request has no valid credentials. In a real flow, step 1 is to POST to /auth/login with username and password to receive a JWT token.',
+      'Once you have the JWT token, every protected request needs: `Authorization: Bearer <your_token_here>`. The word "Bearer" (capital B) and the space before the token are required.',
+    ],
+  },
+  {
+    slug: 'mission-full-crud',
+    title: 'The E-Commerce API Repair',
+    category: 'REST',
+    type: 'MISSION',
+    difficulty: 'ADVANCED',
+    order: 10,
+    xpReward: 150,
+    coinReward: 50,
+    description: 'A broken e-commerce API needs several things fixed: you need to retrieve products correctly. Start by fetching the product catalogue with the right method and endpoint.',
+    scenarioContext: 'The product management system is using all the wrong HTTP methods. Your task: send a correct GET request to retrieve all products from the catalogue. This is step 1 of a full CRUD repair mission.',
+    initialRequest: { method: 'POST', endpoint: '/products', headers: {}, body: '' },
+    expectedOutcome: {
+      method: 'GET',
+      endpointPattern: '/products',
+      expectedStatusRange: [200, 299],
+    },
+    hints: [
+      'Think about what operation you\'re performing. Reading/retrieving data should use GET, not POST. POST is for creating new resources.',
+      'Change the method to GET and remove the body — GET /products will return the product list. No request body needed for a read operation.',
+    ],
+  },
+];
+
 // ─── Main Seed Function ────────────────────────────────────────────────────────
 
 async function main() {
   console.log('🌱 Starting database seed...\n');
 
-  // Clean existing data
+  // Clean existing content data (NOT users/progress/badges)
+  await prisma.missionAttempt.deleteMany();
+  await prisma.mission.deleteMany();
   await prisma.completedChallenge.deleteMany();
   await prisma.userBadge.deleteMany();
   await prisma.userProgress.deleteMany();
@@ -477,9 +714,16 @@ async function main() {
     console.log(`✓ Seeded topic "${conceptFields.title}" (${challenges.length} challenges)`);
   }
 
+  // ── Seed Missions ────────────────────────────────────────────────────────────
+  for (const m of missionsData) {
+    await prisma.mission.create({ data: m });
+    console.log(`✓ Seeded mission "${m.title}" [${m.type}]`);
+  }
+
   console.log(`\n✅ Database seed complete!`);
   console.log(`   • ${conceptsData.length} concepts/topics seeded`);
   console.log(`   • ${totalChallenges} challenges total`);
+  console.log(`   • ${missionsData.length} API adventure missions seeded`);
 }
 
 main()
@@ -490,3 +734,4 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+

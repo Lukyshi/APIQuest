@@ -11,8 +11,11 @@ const getLeaderboard = asyncHandler(async (req, res) => {
     xpTotal: entry.xpTotal,
     level: entry.level,
     streakCount: entry.streakCount,
+    missionsCompleted: entry.missionsCompleted,
+    bugsFixed: entry.bugsFixed,
   }));
   res.json({ success: true, data });
 });
 
 module.exports = { getLeaderboard };
+

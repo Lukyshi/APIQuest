@@ -7,10 +7,10 @@ const logger = require('./utils/logger');
 const start = async () => {
   try {
     await prisma.$connect();
-    logger.info('✅ Database connected');
+    logger.info('Database connected');
 
     app.listen(PORT, () => {
-      logger.info(`🚀 API Quest backend running on http://localhost:${PORT}`);
+      logger.info(`API Quest backend running on http://localhost:${PORT}`);
       logger.info(`   Health check: http://localhost:${PORT}/api/health`);
     });
   } catch (err) {

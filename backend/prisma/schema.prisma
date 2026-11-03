@@ -34,6 +34,21 @@ enum Difficulty {
   HARD
 }
 
+enum MissionType {
+  DEBUGGER
+  EXPERIMENT
+  MISSION
+}
+
+enum MissionDifficulty {
+  BEGINNER
+  EXPLORER
+  BUILDER
+  DEBUGGER_LVL
+  ADVANCED
+  BOSS
+}
+
 // ─── Models ───────────────────────────────────────────────────────────────────
 
 model User {
@@ -47,6 +62,7 @@ model User {
   badges              UserBadge[]
   completedChallenges CompletedChallenge[]
   sandboxLogs         SandboxLog[]
+  missionAttempts     MissionAttempt[]
 
   @@map("users")
 }
@@ -108,12 +124,14 @@ model ChallengeOption {
 }
 
 model UserProgress {
-  userId       String    @id @map("user_id")
-  xpTotal      Int       @default(0) @map("xp_total")
-  level        Int       @default(1)
-  streakCount  Int       @default(0) @map("streak_count")
-  lastActivity DateTime? @map("last_activity")
-  updatedAt    DateTime  @updatedAt @map("updated_at")
+  userId             String    @id @map("user_id")
+  xpTotal            Int       @default(0) @map("xp_total")
+  level              Int       @default(1)
+  streakCount        Int       @default(0) @map("streak_count")
+  lastActivity       DateTime? @map("last_activity")
+  missionsCompleted  Int       @default(0) @map("missions_completed")
+  bugsFixed          Int       @default(0) @map("bugs_fixed")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -157,4 +175,44 @@ model SandboxLog {
   user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@map("sandbox_logs")
+}
+
+// ─── Missions ─────────────────────────────────────────────────────────────────
+
+model Mission {
+  id              String            @id @default(uuid())
+  slug            String            @unique
+  title           String
+  category        String            // e.g. "REST", "Authentication"
+  type            MissionType
+  difficulty      MissionDifficulty
+  description     String
+  scenarioContext String            @map("scenario_context") // narrative flavour text
+  initialRequest  Json              @map("initial_request")  // { method, endpoint, headers, body }
+  expectedOutcome Json              @map("expected_outcome") // { method, endpointPattern, requiredHeaders, requiredBodyKeys, expectedStatusRange }
+  xpReward        Int               @map("xp_reward")
+  coinReward      Int               @default(0) @map("coin_reward")
+  hints           Json              // array of hint strings
+  order           Int               @default(0)
+  createdAt       DateTime          @default(now()) @map("created_at")
+
+  attempts MissionAttempt[]
+
+  @@map("missions")
+}
+
+model MissionAttempt {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  missionId   String   @map("mission_id")
+  completedAt DateTime @default(now()) @map("completed_at")
+  hintsUsed   Int      @default(0) @map("hints_used")
+  xpAwarded   Int      @default(0) @map("xp_awarded")
+  isCorrect   Boolean  @map("is_correct")
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mission Mission @relation(fields: [missionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, missionId])
+  @@map("mission_attempts")
 }

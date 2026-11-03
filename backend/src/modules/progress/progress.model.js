@@ -137,3 +137,4 @@ const getBadges = (userId) =>
 
 module.exports = { getOrCreate, addXp, updateStreak, checkAndAwardBadges, getProgress, getByUserId, getCompletedChallenges, getBadges };
 
+
