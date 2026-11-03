@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AppLayout from '../layouts/AppLayout';
 import AuthLayout from '../layouts/AuthLayout';
+import DashboardLayout from '../layouts/DashboardLayout';
 import { useAuthStore } from '../features/auth/authStore';
 
 // Pages
@@ -12,7 +13,10 @@ import ConceptDetailPage from '../features/concepts/ConceptDetailPage';
 import SandboxPage     from '../features/sandbox/SandboxPage';
 import ChallengesPage  from '../features/challenges/ChallengesPage';
 import ChallengePage   from '../features/challenges/ChallengePage';
-import DashboardPage   from '../features/progress/DashboardPage';
+import MissionsPage    from '../features/missions/MissionsPage';
+import MissionPage     from '../features/missions/MissionPage';
+import DashboardHomePage from '../features/dashboard/DashboardHomePage';
+import ProfilePage     from '../features/dashboard/ProfilePage';
 import LeaderboardPage from '../features/leaderboard/LeaderboardPage';
 import PrivacyPage     from '../features/legal/PrivacyPage';
 import TermsPage       from '../features/legal/TermsPage';
@@ -25,7 +29,12 @@ const ProtectedRoute = ({ children }) => {
 
 const GuestRoute = ({ children }) => {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  return !isAuthenticated ? children : <Navigate to="/dashboard" replace />;
+  return !isAuthenticated ? children : <Navigate to="/hub" replace />;
+};
+
+const HomeRoute = () => {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  return isAuthenticated ? <Navigate to="/hub" replace /> : <HomePage />;
 };
 
 export default function AppRouter() {
@@ -38,18 +47,27 @@ export default function AppRouter() {
           <Route path="/register" element={<GuestRoute><RegisterPage /></GuestRoute>} />
         </Route>
 
-        {/* App layout */}
+        {/* Authenticated Dashboard Hub Layout */}
+        <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+          <Route path="/hub"         element={<DashboardHomePage />} />
+          <Route path="/hub/profile" element={<ProfilePage />} />
+        </Route>
+
+        {/* Public / Main App layout */}
         <Route element={<AppLayout />}>
-          <Route index            element={<HomePage />} />
+          <Route index            element={<HomeRoute />} />
           <Route path="/concepts" element={<ConceptsPage />} />
           <Route path="/concepts/:slug" element={<ConceptDetailPage />} />
           <Route path="/sandbox"  element={<SandboxPage />} />
           <Route path="/challenges" element={<ChallengesPage />} />
           <Route path="/challenges/:id" element={<ChallengePage />} />
+          <Route path="/missions"      element={<MissionsPage />} />
+          <Route path="/missions/:id"  element={<MissionPage />} />
           <Route path="/leaderboard" element={<LeaderboardPage />} />
           <Route path="/privacy"     element={<PrivacyPage />} />
           <Route path="/terms"       element={<TermsPage />} />
-          <Route path="/dashboard"   element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+          {/* Legacy redirect */}
+          <Route path="/dashboard"   element={<Navigate to="/hub" replace />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />
@@ -58,3 +76,4 @@ export default function AppRouter() {
     </BrowserRouter>
   );
 }
+

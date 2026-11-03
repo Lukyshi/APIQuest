@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { leaderboardApi } from './api';
 import { useAuthStore } from '../auth/authStore';
-import { Trophy, Flame, Star, Loader2, Crown, Zap } from 'lucide-react';
+import { Trophy, Flame, Star, Loader2, Crown, Zap, Compass, Bug } from 'lucide-react';
 
 const rankBadge = (rank) => {
   if (rank === 1) return <Crown size={20} className="text-amber-400 fill-amber-400 animate-pulse" />;
@@ -71,9 +71,15 @@ export default function LeaderboardPage() {
                     </span>
                     {isMe && <span className="pill-yellow text-[9px] py-0.5">YOU</span>}
                   </div>
-                  <div className="flex items-center gap-3 text-xs text-slate-400 mt-1 font-pixel">
+                  <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400 mt-1 font-pixel">
                     <span className="flex items-center gap-1 text-amber-400"><Star size={10} /> Level {entry.level}</span>
                     <span className="flex items-center gap-1 text-orange-400"><Flame size={10} className="fill-orange-400" /> {entry.streakCount}d streak</span>
+                    {entry.missionsCompleted > 0 && (
+                      <span className="flex items-center gap-1 text-emerald-400"><Compass size={10} /> {entry.missionsCompleted} missions</span>
+                    )}
+                    {entry.bugsFixed > 0 && (
+                      <span className="flex items-center gap-1 text-rose-400"><Bug size={10} /> {entry.bugsFixed} bugs</span>
+                    )}
                   </div>
                 </div>
 

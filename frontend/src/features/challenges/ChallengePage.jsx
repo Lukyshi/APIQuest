@@ -6,7 +6,7 @@ import { useAuthStore } from '../auth/authStore';
 import { toast } from 'react-hot-toast';
 import {
   ArrowLeft, CheckCircle2, XCircle, Zap, Star,
-  Loader2, Swords, ChevronRight, Trophy, LogIn, UserPlus, X
+  Loader2, Swords, ChevronRight, Trophy, LogIn, UserPlus, X, Lock
 } from 'lucide-react';
 import {
   PixelFirstBlood, PixelLink, PixelScroll, PixelBolt,

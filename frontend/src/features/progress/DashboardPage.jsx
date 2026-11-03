@@ -4,7 +4,7 @@ import { progressApi } from './api';
 import { useAuthStore } from '../auth/authStore';
 import {
   Zap, Star, Flame, Trophy, Shield, ArrowRight,
-  BookOpen, Swords, Loader2, Calendar, User
+  BookOpen, Swords, Loader2, Calendar, User, Compass, Bug, CheckCircle2
 } from 'lucide-react';
 import {
   PixelFirstBlood, PixelLink, PixelScroll, PixelBolt,
@@ -35,7 +35,7 @@ export default function DashboardPage() {
   const { data: progress, isLoading } = useQuery({
     queryKey: ['progress'],
     queryFn: progressApi.getMe,
-    refetchOnMount: true, // always get fresh XP after completing a challenge
+    refetchOnMount: true, // always get fresh XP after completing a challenge or mission
   });
 
   if (isLoading) return (
@@ -44,11 +44,13 @@ export default function DashboardPage() {
     </div>
   );
 
-  const xpTotal   = progress?.xpTotal   || 0;
-  const level     = progress?.level     || 1;
-  const xpInLevel = xpTotal % 100;
-  const badgesEarned = progress?.badges?.length || 0;
-  const initials  = (user?.username || '??').slice(0, 2).toUpperCase();
+  const xpTotal           = progress?.xpTotal           || 0;
+  const level             = progress?.level             || 1;
+  const xpInLevel         = xpTotal % 100;
+  const badgesEarned      = progress?.badges?.length    || 0;
+  const missionsCompleted = progress?.missionsCompleted || 0;
+  const bugsFixed         = progress?.bugsFixed         || 0;
+  const initials          = (user?.username || '??').slice(0, 2).toUpperCase();
 
   // Format join date if available
   const joinDate = user?.createdAt
@@ -112,43 +114,67 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Stats Row ─────────────────────────────────────────────────────────── */}
-      <div className="grid sm:grid-cols-3 gap-5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         {/* Level */}
-        <div className="glass-card p-6 border-2 border-amber-500/30">
-          <div className="flex items-start justify-between mb-3">
+        <div className="glass-card p-5 border-2 border-amber-500/30">
+          <div className="flex items-start justify-between mb-2">
             <div className="text-[10px] font-pixel text-slate-400 uppercase">Player Level</div>
-            <div className="w-9 h-9 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
-              <Star size={18} className="fill-amber-400" />
+            <div className="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
+              <Star size={16} className="fill-amber-400" />
             </div>
           </div>
-          <div className="font-pixel text-4xl font-extrabold gradient-text mb-1">{level}</div>
-          <div className="text-[11px] font-pixel text-slate-400">{xpInLevel}/100 XP to next level</div>
+          <div className="font-pixel text-3xl font-extrabold gradient-text mb-1">{level}</div>
+          <div className="text-[10px] font-pixel text-slate-400">{xpInLevel}/100 to Lv {level + 1}</div>
         </div>
 
         {/* Streak */}
-        <div className="glass-card p-6 border-2 border-amber-500/30">
-          <div className="flex items-start justify-between mb-3">
+        <div className="glass-card p-5 border-2 border-amber-500/30">
+          <div className="flex items-start justify-between mb-2">
             <div className="text-[10px] font-pixel text-slate-400 uppercase">Daily Streak</div>
-            <div className="w-9 h-9 rounded-lg bg-orange-500/20 border border-orange-500/40 flex items-center justify-center text-orange-400">
-              <Flame size={18} className="fill-orange-400" />
+            <div className="w-8 h-8 rounded-lg bg-orange-500/20 border border-orange-500/40 flex items-center justify-center text-orange-400">
+              <Flame size={16} className="fill-orange-400" />
             </div>
           </div>
-          <div className="font-pixel text-4xl font-extrabold text-orange-400 mb-1">
+          <div className="font-pixel text-3xl font-extrabold text-orange-400 mb-1">
             {progress?.streakCount || 0}
           </div>
-          <div className="text-[11px] font-pixel text-slate-400">consecutive days active</div>
+          <div className="text-[10px] font-pixel text-slate-400">days active</div>
         </div>
 
         {/* Badges */}
-        <div className="glass-card p-6 border-2 border-amber-500/30">
-          <div className="flex items-start justify-between mb-3">
+        <div className="glass-card p-5 border-2 border-amber-500/30">
+          <div className="flex items-start justify-between mb-2">
             <div className="text-[10px] font-pixel text-slate-400 uppercase">Badges Earned</div>
-            <div className="w-9 h-9 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
-              <Shield size={18} />
+            <div className="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
+              <Shield size={16} />
             </div>
           </div>
-          <div className="font-pixel text-4xl font-extrabold text-amber-300 mb-1">{badgesEarned}</div>
-          <div className="text-[11px] font-pixel text-slate-400">out of {Object.keys(BADGE_META).length} total</div>
+          <div className="font-pixel text-3xl font-extrabold text-amber-300 mb-1">{badgesEarned}</div>
+          <div className="text-[10px] font-pixel text-slate-400">of {Object.keys(BADGE_META).length} unlocked</div>
+        </div>
+
+        {/* Missions Completed */}
+        <div className="glass-card p-5 border-2 border-emerald-500/30">
+          <div className="flex items-start justify-between mb-2">
+            <div className="text-[10px] font-pixel text-slate-400 uppercase">Missions</div>
+            <div className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
+              <Compass size={16} />
+            </div>
+          </div>
+          <div className="font-pixel text-3xl font-extrabold text-emerald-400 mb-1">{missionsCompleted}</div>
+          <div className="text-[10px] font-pixel text-slate-400">completed</div>
+        </div>
+
+        {/* Bugs Fixed */}
+        <div className="glass-card p-5 border-2 border-rose-500/30 col-span-2 sm:col-span-1">
+          <div className="flex items-start justify-between mb-2">
+            <div className="text-[10px] font-pixel text-slate-400 uppercase">Bugs Fixed</div>
+            <div className="w-8 h-8 rounded-lg bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400">
+              <Bug size={16} />
+            </div>
+          </div>
+          <div className="font-pixel text-3xl font-extrabold text-rose-400 mb-1">{bugsFixed}</div>
+          <div className="text-[10px] font-pixel text-slate-400">debugged</div>
         </div>
       </div>
 
@@ -186,8 +212,9 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Quick Actions ─────────────────────────────────────────────────────── */}
-      <div className="grid sm:grid-cols-3 gap-4">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
+          { to: '/missions',    icon: Compass,  label: 'API Missions',   sub: 'Debug & solve issues' },
           { to: '/concepts',    icon: BookOpen, label: 'Study Library',  sub: 'Learn API theory' },
           { to: '/challenges',  icon: Swords,   label: 'Play Quests',    sub: 'Earn XP & level up' },
           { to: '/leaderboard', icon: Trophy,   label: 'High Scores',    sub: 'Compare rankings' },

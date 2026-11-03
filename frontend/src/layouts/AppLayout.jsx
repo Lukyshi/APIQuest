@@ -3,7 +3,7 @@ import { useAuthStore } from '../features/auth/authStore';
 import { useState } from 'react';
 import {
   BookOpen, Code2, Zap, Trophy, LayoutDashboard,
-  LogOut, Menu, X, Swords, Flame, Heart
+  LogOut, Menu, X, Swords, Flame, Heart, Compass
 } from 'lucide-react';
 import { openCookiePreferences } from '../components/CookieConsent';
 
@@ -11,6 +11,7 @@ const navItems = [
   { to: '/concepts',    label: 'Learn',       icon: BookOpen },
   { to: '/sandbox',     label: 'Sandbox',     icon: Code2 },
   { to: '/challenges',  label: 'Challenges',  icon: Swords },
+  { to: '/missions',    label: 'Missions',    icon: Compass },
   { to: '/leaderboard', label: 'Leaderboard', icon: Trophy },
 ];
 
@@ -59,11 +60,11 @@ export default function AppLayout() {
                   <span>PLAYER: <strong className="text-white">{user?.username}</strong></span>
                 </div>
                 <NavLink
-                  to="/dashboard"
+                  to="/hub"
                   className={({ isActive }) => `nav-link font-pixel text-xs py-1.5 px-3 ${isActive ? 'active' : ''}`}
                 >
                   <LayoutDashboard size={14} />
-                  HUD
+                  HUB
                 </NavLink>
                 <button
                   onClick={logout}
@@ -109,8 +110,8 @@ export default function AppLayout() {
             ))}
             {isAuthenticated ? (
               <div className="pt-2 border-t border-emerald-500/20 space-y-2">
-                <NavLink to="/dashboard" onClick={() => setMobileOpen(false)} className={({ isActive }) => `nav-link font-pixel w-full ${isActive ? 'active' : ''}`}>
-                  <LayoutDashboard size={16} /> Player HUD
+                <NavLink to="/hub" onClick={() => setMobileOpen(false)} className={({ isActive }) => `nav-link font-pixel w-full ${isActive ? 'active' : ''}`}>
+                  <LayoutDashboard size={16} /> Player Hub
                 </NavLink>
                 <button onClick={() => { logout(); setMobileOpen(false); }} className="nav-link font-pixel w-full text-rose-400">
                   <LogOut size={16} /> Quit Game
@@ -156,6 +157,7 @@ export default function AppLayout() {
               <Link to="/concepts" className="hover:text-emerald-400 transition-colors">Learn</Link>
               <Link to="/sandbox" className="hover:text-emerald-400 transition-colors">Sandbox</Link>
               <Link to="/challenges" className="hover:text-emerald-400 transition-colors">Quests</Link>
+              <Link to="/missions" className="hover:text-emerald-400 transition-colors">Missions</Link>
               <Link to="/leaderboard" className="hover:text-emerald-400 transition-colors">Leaderboard</Link>
             </div>
           </div>
