@@ -12,6 +12,7 @@ import {
 } from '../../components/PixelIcons';
 import PixelWind from '../../components/PixelWind';
 import StoneContainer from '../../components/StoneContainer';
+import HeroEmblem from './HeroEmblem';
 
 /* ─── 4 Pillars (Learn is kept strictly intact) ─────────────────────────── */
 const coreHubs = [
@@ -283,66 +284,8 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Right Column: Visual Relic Shrine Showcase Card (Image 3 & Image 2 Inspiration) */}
-            <div className="lg:col-span-5 flex justify-center animate-slide-up">
-              <StoneContainer className="w-full max-w-md p-6 sm:p-8 border-2 border-amber-500/40 relative overflow-hidden" hoverGlow="amber">
-                {/* Floating ambient glow behind emblem */}
-                <div className="pointer-events-none absolute -top-12 -right-12 w-48 h-48 rounded-full bg-amber-500/20 blur-[60px]" />
-                <div className="pointer-events-none absolute -bottom-12 -left-12 w-48 h-48 rounded-full bg-emerald-500/20 blur-[60px]" />
-
-                {/* Status Bar */}
-                <div className="flex items-center justify-between pb-4 border-b border-emerald-500/20 text-xs font-pixel">
-                  <div className="flex items-center gap-2 text-emerald-400">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    <span>TEMPLE STATUS: ONLINE</span>
-                  </div>
-                  <span className="text-amber-400">REALM 01: ACTIVE</span>
-                </div>
-
-                {/* Floating Emblem Centerpiece */}
-                <div className="py-6 flex flex-col items-center text-center">
-                  <img
-                    src="/logo.png"
-                    alt="API Quest logo"
-                    className="h-24 sm:h-28 w-auto animate-float drop-shadow-[0_0_25px_rgba(245,158,11,0.5)] mb-4"
-                  />
-                  <h3 className="font-pixel text-2xl font-extrabold text-white">
-                    API<span className="gradient-text">QUEST</span>
-                  </h3>
-                  <p className="text-xs text-slate-400 mt-1 font-pixel">
-                    THE DEVELOPER'S TEMPLE TRIAL
-                  </p>
-                </div>
-
-                {/* Expedition Preview Node */}
-                <div className="p-4 rounded-xl bg-moss-950/80 border border-emerald-500/30 space-y-2.5">
-                  <div className="flex items-center justify-between text-[11px] font-pixel">
-                    <span className="text-amber-400 flex items-center gap-1.5">
-                      <PixelBolt size={14} /> REST API REALM
-                    </span>
-                    <span className="pill-emerald text-[9px]">LEVEL 1 UNLOCKED</span>
-                  </div>
-                  <div className="text-sm font-bold text-white leading-snug">
-                    HTTP Verbs & Status Code Verification
-                  </div>
-                  <div className="flex items-center justify-between text-xs font-mono text-slate-300 pt-1">
-                    <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">
-                      GET /api/v1/temple/relics
-                    </span>
-                    <span className="text-amber-300 font-pixel text-[10px]">+15 XP</span>
-                  </div>
-                </div>
-
-                {/* Protocol Tags */}
-                <div className="pt-4 flex flex-wrap items-center justify-center gap-2">
-                  {['REST', 'SOAP', 'GRAPHQL', 'JWT AUTH', 'WEBHOOKS'].map((p) => (
-                    <span key={p} className="pill-slate text-[9px] font-pixel py-1 px-2.5">
-                      {p}
-                    </span>
-                  ))}
-                </div>
-              </StoneContainer>
-            </div>
+            {/* Right Column: Interactive Floating Emblem with Click Sparks */}
+            <HeroEmblem />
           </div>
         </section>
 

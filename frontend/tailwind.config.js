@@ -4,7 +4,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        pixel: ['"Pixelify Sans"', '"Press Start 2P"', 'cursive', 'monospace'],
+        pixel: ['"Upheaval"', '"Upheaval TT"', '"Upheaval TT -BRK-"', 'cursive', 'monospace'],
+        upheaval: ['"Upheaval"', '"Upheaval TT"', '"Upheaval TT -BRK-"', 'cursive', 'monospace'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'Fira Code', 'monospace'],
       },

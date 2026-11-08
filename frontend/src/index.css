@@ -1,3 +1,4 @@
+@import './assets/upheaval.css';
 @import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Press+Start+2P&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
@@ -42,8 +43,13 @@
 @layer components {
   /* ── Typography & Headers ─────────────────────────────────────────────── */
   .font-pixel {
-    font-family: 'Pixelify Sans', 'Press Start 2P', cursive, monospace;
-    letter-spacing: 0.02em;
+    font-family: 'Upheaval', 'Upheaval TT', 'Upheaval TT -BRK-', cursive, monospace !important;
+    letter-spacing: 0.04em;
+  }
+
+  .font-upheaval {
+    font-family: 'Upheaval', 'Upheaval TT', 'Upheaval TT -BRK-', cursive, monospace !important;
+    letter-spacing: 0.04em;
   }
 
   .font-press-start {
@@ -407,7 +413,7 @@
   }
   .dash-sidebar-section-label {
     display: block;
-    font-family: 'Pixelify Sans', cursive, monospace;
+    font-family: 'Upheaval', 'Pixelify Sans', cursive, monospace;
     font-size: 0.625rem;
     font-weight: 700;
     color: #64748b;
@@ -421,7 +427,7 @@
     gap: 0.75rem;
     padding: 0.625rem 0.75rem;
     border-radius: 0.625rem;
-    font-family: 'Pixelify Sans', cursive, monospace;
+    font-family: 'Upheaval', 'Pixelify Sans', cursive, monospace;
     font-size: 0.75rem;
     font-weight: 700;
     color: #cbd5e1;
@@ -553,7 +559,7 @@
   .dash-footer {
     border-top: 1px solid rgba(52, 211, 153, 0.15);
     padding: 1.5rem;
-    font-family: 'Pixelify Sans', cursive, monospace;
+    font-family: 'Upheaval', 'Pixelify Sans', cursive, monospace;
     font-size: 0.75rem;
     color: #64748b;
     display: flex;
@@ -696,7 +702,7 @@
     display: inline-flex;
     align-items: center;
     gap: 0.375rem;
-    font-family: 'Pixelify Sans', cursive, monospace;
+    font-family: 'Upheaval', 'Pixelify Sans', cursive, monospace;
     font-size: 0.75rem;
     font-weight: 700;
     color: #fbbf24;
@@ -704,7 +710,7 @@
     letter-spacing: 0.05em;
   }
   .dash-welcome-name {
-    font-family: 'Pixelify Sans', cursive, monospace;
+    font-family: 'Upheaval', 'Pixelify Sans', cursive, monospace;
     font-size: 1.75rem;
     font-weight: 900;
     color: #ffffff;
@@ -729,7 +735,7 @@
     display: inline-flex;
     align-items: center;
     gap: 0.375rem;
-    font-family: 'Pixelify Sans', cursive, monospace;
+    font-family: 'Upheaval', 'Pixelify Sans', cursive, monospace;
     font-size: 0.6875rem;
     color: #94a3b8;
   }
@@ -752,7 +758,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-family: 'Pixelify Sans', cursive, monospace;
+    font-family: 'Upheaval', 'Pixelify Sans', cursive, monospace;
     font-size: 0.75rem;
     margin-bottom: 0.5rem;
   }
@@ -769,7 +775,7 @@
   }
   .dash-welcome-xp-level {
     text-align: right;
-    font-family: 'Pixelify Sans', cursive, monospace;
+    font-family: 'Upheaval', 'Pixelify Sans', cursive, monospace;
     font-size: 0.6875rem;
     color: #94a3b8;
     margin-top: 0.375rem;
@@ -838,7 +844,7 @@
     margin-bottom: 0.5rem;
   }
   .dash-stat-label {
-    font-family: 'Pixelify Sans', cursive, monospace;
+    font-family: 'Upheaval', 'Pixelify Sans', cursive, monospace;
     font-size: 0.625rem;
     font-weight: 700;
     color: #94a3b8;
@@ -869,14 +875,14 @@
     color: #fb7185;
   }
   .dash-stat-value {
-    font-family: 'Pixelify Sans', cursive, monospace;
+    font-family: 'Upheaval', 'Pixelify Sans', cursive, monospace;
     font-size: 1.5rem;
     font-weight: 800;
     line-height: 1.1;
     margin-bottom: 0.25rem;
   }
   .dash-stat-sub {
-    font-family: 'Pixelify Sans', cursive, monospace;
+    font-family: 'Upheaval', 'Pixelify Sans', cursive, monospace;
     font-size: 0.625rem;
     color: #64748b;
   }
@@ -933,7 +939,7 @@
     margin-bottom: 1.25rem;
   }
   .dash-section-title {
-    font-family: 'Pixelify Sans', cursive, monospace;
+    font-family: 'Upheaval', 'Pixelify Sans', cursive, monospace;
     font-size: 0.875rem;
     font-weight: 800;
     color: #ffffff;
@@ -948,7 +954,7 @@
     }
   }
   .dash-section-count {
-    font-family: 'Pixelify Sans', cursive, monospace;
+    font-family: 'Upheaval', 'Pixelify Sans', cursive, monospace;
     font-size: 0.75rem;
     color: #fbbf24;
     background: rgba(245, 158, 11, 0.1);
@@ -960,7 +966,7 @@
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
-    font-family: 'Pixelify Sans', cursive, monospace;
+    font-family: 'Upheaval', 'Pixelify Sans', cursive, monospace;
     font-size: 0.6875rem;
     font-weight: 700;
     color: #34d399;
@@ -1029,7 +1035,7 @@
     margin-bottom: 0.5rem;
   }
   .dash-badge-label {
-    font-family: 'Pixelify Sans', cursive, monospace;
+    font-family: 'Upheaval', 'Pixelify Sans', cursive, monospace;
     font-size: 0.625rem;
     font-weight: 700;
     line-height: 1.2;
@@ -1039,7 +1045,7 @@
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
-    font-family: 'Pixelify Sans', cursive, monospace;
+    font-family: 'Upheaval', 'Pixelify Sans', cursive, monospace;
     font-size: 0.5rem;
     font-weight: 800;
     color: #34d399;
@@ -1089,7 +1095,7 @@
     margin-bottom: 0.25rem;
   }
   .dash-mission-title {
-    font-family: 'Pixelify Sans', cursive, monospace;
+    font-family: 'Upheaval', 'Pixelify Sans', cursive, monospace;
     font-size: 0.75rem;
     font-weight: 700;
     color: #ffffff;
@@ -1109,7 +1115,7 @@
     text-align: center;
     padding: 2rem 1rem;
     color: #94a3b8;
-    font-family: 'Pixelify Sans', cursive, monospace;
+    font-family: 'Upheaval', 'Pixelify Sans', cursive, monospace;
     font-size: 0.75rem;
   }
 
@@ -1168,7 +1174,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Pixelify Sans', cursive, monospace;
+    font-family: 'Upheaval', 'Pixelify Sans', cursive, monospace;
     font-size: 0.75rem;
     font-weight: 700;
     color: #f1f5f9;
