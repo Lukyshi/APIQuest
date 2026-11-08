@@ -309,10 +309,84 @@ Renders the top 50 global players:
 
 ---
 
+### 4.6 Homepage Hero Staging, Emblem & Interactive Click Sparks
+
+**Files:** [`src/features/home/HomePage.jsx`](../../frontend/src/features/home/HomePage.jsx) and [`src/features/home/HeroEmblem.jsx`](../../frontend/src/features/home/HeroEmblem.jsx)
+
+The hero section (`min-h-[92vh]`) features a 12-column split composition:
+- **Left Column (`lg:col-span-7`):** Massive two-tone headline ("MASTER THE REALM OF API ENGINEERING"), readable concept description, dual arcade CTAs (`/register`, `/login`), and a horizontal 4-item live telemetry metrics bar.
+- **Right Column (`lg:col-span-5`):** Interactive floating golden compass emblem showcase:
+  - Replaced the dense relic shrine preview card with the standalone `HeroEmblem` component.
+  - **Responsive Sizing**: `w-56 sm:w-72 md:w-80 lg:w-[350px] xl:w-[410px]` with `h-auto object-contain`, perfectly balancing the left column without awkward gaps.
+  - **Multi-layered Ambient Lighting**: Dual radial background auras (`bg-amber-500/25` and `bg-emerald-500/15` with `blur-[80px]`) and a grounding pedestal glow.
+  - **Floating Animation**: `animate-float` with dual drop-shadows for a physical floating relic effect.
+  - **Interactive Mouse Click Sparks**:
+    - Embedded 60fps HTML5 Canvas particle explosion on click.
+    - Spawns 32 radial arcade particles (pixel squares and crosses) with directional velocities, friction decay (`0.93`), gravity, and rotation.
+    - Particle palette: bright gold (`#fbbf24`), warm amber (`#f59e0b`), pale yellow (`#fde68a`), emerald green (`#34d399`), and diamond white (`#ffffff`).
+    - Two expanding glowing shockwave rings radiate from the exact mouse click coordinates.
+    - Tactile visual feedback: active click scale bounce (`active:scale-95`), temporary radiant flash brightness flare, and automatic self-cleaning animation loop (0% idle CPU usage).
+
+---
+
 ## 5. Cookie Consent & Privacy Preference Management
 
 **File:** [`src/components/CookieConsent.jsx`](../../frontend/src/components/CookieConsent.jsx)
 
 - Manages GDPR / CCPA cookie consent via local storage key `apiquest-cookie-consent`.
 - Provides both quick action ("Accept All", "Reject Non-Essential") and a granular preference modal triggered globally by `openCookiePreferences()`.
+
+---
+
+## 6. Arcade Typography & Upheaval Font Integration
+
+**Files:** [`frontend/public/fonts/upheavtt.ttf`](../../frontend/public/fonts/upheavtt.ttf), [`frontend/src/assets/upheaval.css`](../../frontend/src/assets/upheaval.css), [`frontend/src/main.jsx`](../../frontend/src/main.jsx), [`frontend/src/index.css`](../../frontend/src/index.css), and [`frontend/tailwind.config.js`](../../frontend/tailwind.config.js)
+
+To achieve an authentic retro gaming/arcade look across the platform, the classic pixel typeface **Upheaval** (`Upheaval TT BRK` by Ænigma) is bundled and integrated across the frontend:
+
+### 6.1 Font Preloading & In-Bundle Embedding
+To eliminate Flash of Unstyled Text (FOUT) and prevent path resolution errors across dev servers, ports, and build artifacts, the font is:
+1. Preloaded in `frontend/index.html`:
+   ```html
+   <link rel="preload" href="/fonts/upheavtt.ttf" as="font" type="font/ttf" crossorigin />
+   ```
+2. Embedded as a Base64 TrueType Data URI inside `frontend/src/assets/upheaval.css` and imported directly in `frontend/src/main.jsx`:
+   ```css
+   @font-face {
+     font-family: 'Upheaval';
+     src: url('data:font/truetype;charset=utf-8;base64,...') format('truetype'),
+          url('/fonts/upheavtt.ttf') format('truetype');
+     font-weight: normal;
+     font-style: normal;
+     font-display: swap;
+   }
+   ```
+
+### 6.2 Explicit Font-Weight & Alias Declarations
+Because standard bitmap/pixel fonts are non-variable TrueType fonts, declaring a generic weight range like `font-weight: 400 900` causes browser parsers to reject the descriptor and fall back to system fonts. To guarantee robust rendering across all Tailwind font weight classes (`font-bold`, `font-black`, `font-extrabold`), `upheaval.css` registers distinct `@font-face` rules for `normal`, `bold`, and `100 900` across family aliases (`Upheaval`, `Upheaval TT`, `Upheaval TT -BRK-`).
+
+### 6.3 CSS Component Utilities & Tailwind Config
+Configured in `src/index.css` and `tailwind.config.js`:
+```css
+.font-pixel, [class*="font-pixel"] {
+  font-family: 'Upheaval', 'Upheaval TT', 'Upheaval TT -BRK-', cursive, monospace !important;
+  letter-spacing: 0.04em;
+}
+
+.font-upheaval {
+  font-family: 'Upheaval', 'Upheaval TT', 'Upheaval TT -BRK-', cursive, monospace !important;
+  letter-spacing: 0.04em;
+}
+```
+
+```javascript
+fontFamily: {
+  pixel: ['"Upheaval"', '"Upheaval TT"', '"Upheaval TT -BRK-"', 'cursive', 'monospace'],
+  upheaval: ['"Upheaval"', '"Upheaval TT"', '"Upheaval TT -BRK-"', 'cursive', 'monospace'],
+  sans: ['Inter', 'system-ui', 'sans-serif'],
+  mono: ['"JetBrains Mono"', 'Fira Code', 'monospace'],
+}
+```
+All UI elements utilizing `font-pixel` (headings, arcade badges, leaderboard scores, navigation pills, and buttons) reliably render with Upheaval.
+
 

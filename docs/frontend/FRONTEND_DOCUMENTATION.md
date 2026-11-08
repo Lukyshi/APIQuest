@@ -26,11 +26,11 @@
 
 ```
 frontend/
-├── public/                    # Static assets (logo.png, character.png, apiBackground.jpg, etc.)
-├── index.html                 # Single page application entry HTML shell
+├── public/                    # Static assets (logo.png, character.png, apiBackground.jpg, fonts/upheavtt.ttf)
+├── index.html                 # Single page application entry HTML shell (includes font preloading)
 ├── package.json               # Dependencies and build scripts
 ├── vite.config.js             # Vite configuration with React plugin
-├── tailwind.config.js         # Jungle Temple palette, typography, keyframes, box shadows
+├── tailwind.config.js         # Jungle Temple palette, typography (Upheaval, Inter, JetBrains Mono), keyframes
 ├── postcss.config.js          # PostCSS processor configuration
 └── src/
     ├── main.jsx               # Application bootstrap (QueryClientProvider, Toaster, App)
@@ -79,6 +79,7 @@ frontend/
         │   └── ProfilePage.jsx    # User statistics, earned badges, activity history
         │
         ├── home/              # Public landing page
+        │   ├── HeroEmblem.jsx # Interactive floating temple emblem with click spark particle burst
         │   └── HomePage.jsx   # Hero section, feature preview cards, arcade showcase
         │
         ├── leaderboard/       # Global competitive rankings
@@ -268,9 +269,14 @@ Configured in [`frontend/tailwind.config.js`](../../frontend/tailwind.config.js)
 | `stone` | `850: #1a231d`, `800: #232f27`, `750: #2b3a30`, `700: #36473c` | Containers, stone buttons, inset bezels |
 
 ### 6.2 Typography Tokens
-- `font-pixel`: `"Pixelify Sans"`, `"Press Start 2P"`, cursive, monospace (Headings, badges, scores, stats)
+- `font-pixel`: `"Upheaval"`, `"Upheaval TT"`, `"Upheaval TT -BRK-"`, cursive, monospace (Arcade headings, badges, scores, stats, navigation links, and button labels)
+- `font-upheaval`: `"Upheaval"`, `"Upheaval TT"`, `"Upheaval TT -BRK-"`, cursive, monospace (Dedicated arcade game typography token)
 - `font-sans`: `Inter`, system-ui, sans-serif (Body text, documentation, descriptions)
 - `font-mono`: `"JetBrains Mono"`, Fira Code, monospace (Endpoints, headers, JSON payloads, code blocks)
+
+#### Font Loading & Assets:
+- **Upheaval TT (`upheavtt.ttf`)**: Embedded as an optimized Base64 TrueType Data URI inside `src/assets/upheaval.css` and imported directly in `main.jsx` and `index.css`. Also available statically in `/public/fonts/upheavtt.ttf` with preloading in `index.html` via `<link rel="preload" as="font" type="font/ttf" crossorigin />`.
+- **Web Fonts**: `Pixelify Sans`, `Press Start 2P`, `Inter`, and `JetBrains Mono` imported from Google Fonts for auxiliary or body text.
 
 ### 6.3 Reusable Visual Elements
 - **`PixelWind`**: Procedurally places drifting, pulsing pixel particles representing atmospheric spores.
